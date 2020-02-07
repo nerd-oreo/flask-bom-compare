@@ -1,13 +1,9 @@
 from openpyxl import load_workbook
-from item import Item
-from helper import Helper
 
-class BomCompare:
+class Bom:
     def __init__(self):
-        self.BOM_A = dict()     # {unique_id:item}
-        self.uid_BOM_A = list() # unique id list for BOM A
-        self.BOM_B = dict()
-        self.uid_BOM_B = list() # unique id list for BOM A
+        self.BOM = dict()     # {unique_id:item}
+        self.uid_BOM = list() # unique id list for BOM A
         
     def load_xls(self, filename=None, columns=None):
         def load(ws):
@@ -16,8 +12,12 @@ class BomCompare:
             parent_stack = list()
             current_parent = None
             last_item = None
-
-            for row in range(2, ws.max_row+1):
+            
+            min_row = 2
+            max_row = ws.max_row
+            for row in range(min_row, max_row):
+                print("Row: {} - Max Row: {}".format(row, max_row))
+                
                 level = ws[col_level + str(row)].value
                 
                 if level != None:
@@ -47,7 +47,8 @@ class BomCompare:
                         parent_stack.append(current_parent)
                         current_parent = last_item   
                     elif item.level < last_item.level:  # swapping back to upper level
-                        current_parent = parent_stack.pop()
+                        for i in range(last_item.level - item.level):
+                            current_parent = parent_stack.pop()
                     elif item.level == last_item.level:
                         pass
                     item.set_parent(parent=current_parent)
@@ -75,6 +76,76 @@ class BomCompare:
             if len(wb.sheetnames) != 2:
                 raise Exception('Less or more than two sheets in the template.')
             else:
-                self.BOM_A, self.uid_BOM_A = load(wb.worksheets[0])
+                self.BOM, self.uid_BOM = load(wb.worksheets[0])
                 #self.BOM_B, self.uid_BOM_B = load(wb.worksheets[1])
 
+class Item:
+    def __init__(self):
+        self.unique_id = ''    # unique id of each item, format: <parent_level>:<parent_number>:<child_level>:<child_number>
+        self.level = 0
+        self.number = ''
+        self.description = ''
+        self.rev = ''
+        self.quantity = 0
+        self.ref_des = list()
+        self.avl = list()           # avl list as list of dict
+        self.parent = None
+        self.change_status = list()
+    
+    def __repr__(self):
+        s = 'Unique Id: {}\n' \
+            'Parent: {}\n' \
+            'Level: {}\n' \
+            'Number: {}\n' \
+            'Description: {}\n' \
+            'Rev: {}\n' \
+            'Qty: {}\n' \
+            'Ref_Des: {}\n' \
+            'AVL: {}\n'.format(self.unique_id, self.parent.number, self.level, self.number, self.description, self.rev, self.quantity, self.ref_des, self.avl)
+        return s
+    
+    def set_item(self, level, number, description, rev, quantity):
+        self.level = level
+        self.number = number
+        self.description = description.encode('utf-8')
+        self.rev = rev
+        self.quantity = quantity
+    
+    def _set_unique_id(self):
+        if self.parent == None:
+            self.unique_id = '{}:{}'.format(self.level, self.number)
+        else:
+            self.unique_id = '{}:{}:{}:{}'.format(self.parent.level, self.parent.number, self.level, self.number)
+    
+    def set_ref_des(self, ref_des):
+        if ref_des != None:
+            self.ref_des = ref_des.split(',')
+        
+    def set_avl(self, mfg_name, mfg_number):
+        temp = {mfg_name:mfg_number}
+        self.avl.append(temp)
+        
+    def set_parent(self, parent=None):
+        self.parent = parent
+        self._set_unique_id()
+
+class Helper:
+    """ To grouping all utilities functions """
+    def convert_qty_to_number(qty):
+        if qty == "None":
+            return None
+        else:
+            try:
+                return int(qty)
+            except ValueError:
+                return float(qty)
+        
+    def convert_level_to_number(level):
+        try:
+            return int(level)
+        except (TypeError, ValueError):
+            return None
+            
+class BomCompare:
+    def __init__(self):
+        pass

@@ -1,4 +1,4 @@
-class Helper(object):
+class Helper:
     """ To grouping all utilities functions """
     def convert_qty_to_number(qty):
         if qty == "None":
