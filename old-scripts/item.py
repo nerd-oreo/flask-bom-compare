@@ -26,7 +26,7 @@ class Item:
     def set_item(self, level, number, description, rev, quantity):
         self.level = level
         self.number = number
-        self.description = description
+        self.description = description.encode('utf-8')
         self.rev = rev
         self.quantity = quantity
     

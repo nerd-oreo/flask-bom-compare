@@ -1,12 +1,13 @@
-from bom import BomCompare
+from bom import Bom
 
-filename = 'test_template_2.xlsx'
+filename = 'test-sheets\test_template_l.xlsx'
 columns = ['A','G','H','I','L','O','V','X']
 
 
-bom_compare = BomCompare()
-bom_compare.load_xls(filename=filename,columns=columns)
+bom = Bom()
+bom.load_xls(filename=filename,columns=columns)
 
-BOM = bom_compare.BOM_A
-for key in BOM:
+BOM = bom.BOM
+uid_BOM = bom.uid_BOM
+for key in uid_BOM:
 	print('Key: {}\n{}'.format(key, BOM[key]))
