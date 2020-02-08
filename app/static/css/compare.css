@@ -1,0 +1,38 @@
+.main {
+    border: 1px solid #e6e6e6;
+    border-radius: 5px;
+    margin-top: 50px;
+}
+
+.main header {
+    border-bottom: 1px solid #e6e6e6;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.main header h2 a {
+    color: #808080;
+    text-decoration: none;
+}
+
+.upload-section {
+    margin-top: 20px;
+}
+
+.upload-section form {
+    margin-bottom: 0;
+}
+
+.flex-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-container p {
+    text-align: center;
+}
+
+.flex-container input {
+    border: 1px solid #f2f2f2;
+}

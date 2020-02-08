@@ -73,11 +73,7 @@ class Bom:
             col_level, col_number, col_description, col_qty, col_rev, col_ref_des, col_mfg_name, col_mfg_number = columns
 
             wb = load_workbook(filename=filename,read_only=False)
-            if len(wb.sheetnames) != 2:
-                raise Exception('Less or more than two sheets in the template.')
-            else:
-                self.BOM, self.uid_BOM = load(wb.worksheets[0])
-                #self.BOM_B, self.uid_BOM_B = load(wb.worksheets[1])
+            self.BOM, self.uid_BOM = load(wb.worksheets[0])
 
 class Item:
     def __init__(self):
