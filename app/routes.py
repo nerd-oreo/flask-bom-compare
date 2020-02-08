@@ -1,40 +1,39 @@
 from flask import render_template, url_for, redirect, request, flash
 from werkzeug.utils import secure_filename
 from app import app
-
+from app.utils import allowed_file, map_header_to_letter
+from app.bom import Bom
 import os
 
+BOM = dict()
 
-ALLOWED_EXTENSIONS = {'xlsx'}
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-    
-    
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
-        if 'file_a' not in request.files or 'file_b' not in request.files:
-            flash('No files selected')
-            return redirect(url_for('home'))
         file_a = request.files['file_a']
         file_b = request.files['file_b']
-        
-        if file_a.filename == '' or file_b.filename == '':
-            flash('No files selected')
-            return redirect(url_for('home'))
-            
+        bom_a = Bom()
+        bom_b = Bom()
+
         if allowed_file(file_a.filename) and allowed_file(file_b.filename):
-            filename_a = secure_filename(file_a.filename)
-            filename_b = secure_filename(file_b.filename)
-            file_a.save(os.path.join(app.config['UPLOAD_FOLDER'], filename_a))
-            file_b.save(os.path.join(app.config['UPLOAD_FOLDER'], filename_b))
-            return redirect(url_for('config'))
+            bom_a.filename = secure_filename(file_a.filename)
+            bom_b.filename = secure_filename(file_b.filename)
+            bom_a.file_path = os.path.join(app.config['UPLOAD_FOLDER'], bom_a.filename)
+            bom_b.file_path = os.path.join(app.config['UPLOAD_FOLDER'], bom_b.filename)
+            file_a.save(bom_a.file_path)
+            file_b.save(bom_b.file_path)
+            BOM['A'] = bom_a; BOM['B'] = bom_b
+            return redirect(url_for('mapping'))
         else:
             flash('File extension is not allowed.')
-            return redirect(url_for('home')) 
+            return redirect(url_for('home'))
     return render_template('home.html')
-    
-@app.route('/config')
-def config():
-    return "Config page"
+
+
+@app.route('/mapping')
+def mapping():
+    BOM['A'].header_list = map_header_to_letter(BOM['A'].file_path)
+    BOM['B'].header_list = map_header_to_letter(BOM['B'].file_path)
+    print(BOM['A'].header_list)
+    return render_template('mapping.html', BOM=BOM)
