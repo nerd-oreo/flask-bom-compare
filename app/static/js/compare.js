@@ -5,7 +5,7 @@ function validateFileOnSubmit() {
     if(ext_a.localeCompare('xlsx') == 0 && ext_b.localeCompare('xlsx') == 0) {
       return true;
     } else {
-      alert('Please upload .xlsx document only!');
+      alert('File extension is not acceptable!');
       event.preventDefault(); 
       return false;
     }

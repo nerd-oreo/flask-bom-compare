@@ -1,159 +1,87 @@
 from openpyxl import load_workbook
+from app.utils import convert_level_to_number, convert_qty_to_number
+from app.item import Item
+from app.header import Header
 
 
 class Bom:
     def __init__(self):
+        self.title = ""
         self.filename = ""
         self.file_path = ""
-        self.header_list = list()
+        self.sheet_name = ""
+        self.header = Header()
         self.BOM = dict()  # {unique_id:item}
         self.uid_BOM = list()  # unique id list for BOM A
 
-    def load_xls(self, filename=None, columns=None):
-        def load(ws):
-            BOM = dict()
-            uid_BOM = list()
-            parent_stack = list()
-            current_parent = None
-            last_item = None
+    def set_header_list(self, level, number, description, rev, qty, ref_des, mfg_name, mfg_number):
+        self.header.level = level
+        self.header.number = number
+        self.header.description = description
+        self.header.rev = rev
+        self.header.qty = qty
+        self.header.ref_des = ref_des
+        self.header.mfg_name = mfg_name
+        self.header.mfg_number = mfg_number
 
-            min_row = 2
-            max_row = ws.max_row
-            for row in range(min_row, max_row):
-                print("Row: {} - Max Row: {}".format(row, max_row))
+    def load_excel(self):
+        parent_stack = list()
+        current_parent = None
+        last_item = None
 
-                level = ws[col_level + str(row)].value
+        wb = load_workbook(self.filename)
+        ws = wb[self.sheet_name]
 
-                if level is not None:
-                    # get data from excel sheet
-                    level = Helper.convert_level_to_number(str(ws[col_level + str(row)].value))
-                    number = str(ws[col_number + str(row)].value)
-                    description = str(ws[col_description + str(row)].value)
-                    rev = str(ws[col_rev + str(row)].value).split(" ")[0]
-                    qty = Helper.convert_qty_to_number()
+        min_row = 2
+        max_row = ws.max_row
+        for row in range(min_row, max_row):
+            print("Row: {} - Max Row: {}".format(row, max_row))
 
-                    item = Item()
-                    item.set_item(level, number, description, rev, qty)
+            level = ws[self.header.level + str(row)].value
 
-                    if ws[col_ref_des + str(row)].value is not None:
-                        ref_des = str(ws[col_ref_des + str(row)].value)
-                        item.set_ref_des(ref_des)
+            if level is not None:
+                # get data from excel sheet
+                level = convert_level_to_number(str(ws[self.header.level + str(row)].value))
+                number = str(ws[self.header.number + str(row)].value)
+                description = str(ws[self.header.description + str(row)].value)
+                rev = str(ws[self.header.rev + str(row)].value).split(" ")[0]
+                qty = convert_qty_to_number()
 
-                    if ws[col_mfg_name + str(row)].value is not None and ws[col_mfg_number + str(row)].value is not None:
-                        mfg_name = str(ws[col_mfg_name + str(row)].value)
-                        mfg_number = str(ws[col_mfg_number + str(row)].value)
-                        item.set_avl(mfg_name, mfg_number)
+                item = Item()
+                item.set_item(level, number, description, rev, qty)
 
-                    if item.level == 0:  # top level
-                        current_parent = item
-                        item.set_parent()
-                    elif item.level > last_item.level:  # swapping to a lower level
-                        parent_stack.append(current_parent)
-                        current_parent = last_item
-                    elif item.level < last_item.level:  # swapping back to upper level
-                        for i in range(last_item.level - item.level):
-                            current_parent = parent_stack.pop()
-                    elif item.level == last_item.level:
-                        pass
-                    item.set_parent(parent=current_parent)
-                    BOM[item.unique_id] = item
-                    uid_BOM.append(item.unique_id)
-                    last_item = item
+                if ws[self.header.ref_des + str(row)].value is not None:
+                    ref_des = str(ws[self.header.ref_des + str(row)].value)
+                    item.set_ref_des(ref_des)
 
-                else:  # if level is None type, only collect data from column V and X
-                    mfg_name = str(ws[col_mfg_name + str(row)].value)
-                    mfg_number = str(ws[col_mfg_number + str(row)].value)
-
-                    key = uid_BOM[len(uid_BOM) - 1]
-                    item = BOM[key]
+                if ws[self.header.mfg_name + str(row)].value is not None and ws[self.header.mfg_number + str(row)].value is not None:
+                    mfg_name = str(ws[self.header.mfg_name + str(row)].value)
+                    mfg_number = str(ws[self.header.mfg_number + str(row)].value)
                     item.set_avl(mfg_name, mfg_number)
-                    BOM.update({key: item})
 
-            return BOM, uid_BOM
+                if item.level == 0:  # top level
+                    current_parent = item
+                    item.set_parent()
+                elif item.level > last_item.level:  # swapping to a lower level
+                    parent_stack.append(current_parent)
+                    current_parent = last_item
+                elif item.level < last_item.level:  # swapping back to upper level
+                    for i in range(last_item.level - item.level):
+                        current_parent = parent_stack.pop()
+                elif item.level == last_item.level:
+                    pass
+                item.set_parent(parent=current_parent)
+                self.BOM[item.unique_id] = item
+                self.uid_BOM.append(item.unique_id)
+                last_item = item
 
-        if len(columns) != 8:
-            raise Exception('Number of columns isn\'t matched.')
-        else:
-            col_level, col_number, col_description, col_qty, col_rev, col_ref_des, col_mfg_name, col_mfg_number = columns
+            else:  # if level is None type, only collect data from column V and X
+                mfg_name = str(ws[self.header.mfg_name + str(row)].value)
+                mfg_number = str(ws[self.header.mfg_number + str(row)].value)
 
-            wb = load_workbook(filename=filename, read_only=False)
-            self.BOM, self.uid_BOM = load(wb.worksheets[0])
-
-
-class Item:
-    def __init__(self):
-        # unique id of each item, format:
-        # <parent_level>:<parent_number>:<child_level>:<child_number>
-        self.unique_id = ''
-        self.level = 0
-        self.number = ''
-        self.description = ''
-        self.rev = ''
-        self.quantity = 0
-        self.ref_des = list()
-        self.avl = list()  # avl list as list of dict
-        self.parent = None
-        self.change_status = list()
-
-    def __repr__(self):
-        s = 'Unique Id: {}\n' \
-            'Parent: {}\n' \
-            'Level: {}\n' \
-            'Number: {}\n' \
-            'Description: {}\n' \
-            'Rev: {}\n' \
-            'Qty: {}\n' \
-            'Ref_Des: {}\n' \
-            'AVL: {}\n'.format(self.unique_id, self.parent.number, self.level, self.number, self.description, self.rev,
-                               self.quantity, self.ref_des, self.avl)
-        return s
-
-    def set_item(self, level, number, description, rev, quantity):
-        self.level = level
-        self.number = number
-        self.description = description.encode('utf-8')
-        self.rev = rev
-        self.quantity = quantity
-
-    def _set_unique_id(self):
-        if self.parent is None:
-            self.unique_id = '{}:{}'.format(self.level, self.number)
-        else:
-            self.unique_id = '{}:{}:{}:{}'.format(self.parent.level, self.parent.number, self.level, self.number)
-
-    def set_ref_des(self, ref_des):
-        if ref_des is not None:
-            self.ref_des = ref_des.split(',')
-
-    def set_avl(self, mfg_name, mfg_number):
-        temp = {mfg_name: mfg_number}
-        self.avl.append(temp)
-
-    def set_parent(self, parent=None):
-        self.parent = parent
-        self._set_unique_id()
+                key = self.uid_BOM[len(self.uid_BOM) - 1]
+                item = self.BOM[key]
+                item.set_avl(mfg_name, mfg_number)
+                self.BOM.update({key: item})
 
 
-class Helper:
-    """ To grouping all utilities functions """
-    @staticmethod
-    def convert_qty_to_number(qty):
-        if qty == "None":
-            return None
-        else:
-            try:
-                return int(qty)
-            except ValueError:
-                return float(qty)
-
-    @staticmethod
-    def convert_level_to_number(self, level):
-        try:
-            return int(level)
-        except (TypeError, ValueError):
-            return None
-
-
-class BomCompare:
-    def __init__(self):
-        pass
