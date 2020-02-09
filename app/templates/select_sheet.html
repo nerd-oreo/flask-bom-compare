@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="container select-sheet content">
+    <form method="POST" action>
+      {{ form.hidden_tag() }}
+      <p>
+        <label for="select-worksheet-a">{{ form.select_sheet_a.label }}</label>
+        {{ form.select_sheet_a(class="u-full-width") }}
+      </p>
+      <p>
+        <label for="select-worksheet-b">{{ form.select_sheet_b.label }}</label>
+        {{ form.select_sheet_b(class="u-full-width") }}
+      </p>
+      <p>{{ form.next_step(class="button-primary") }}</p>
+    </form>
+  </div>
+{% endblock %}

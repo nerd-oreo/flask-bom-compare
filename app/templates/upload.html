@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container upload-section content">
+  <form method="POST" enctype="multipart/form-data" onsubmit="validateFileOnSubmit();">
+    <div class="form-group">
+      <div class="row">
+        <div class="six columns flex-container">
+          <p><label for="upload_bom_a">Select BOM A:</label><input type="file" name="file_a" class="file-upload-field" id="upload_bom_a" accept=".xlsx" required></p>
+        </div>
+        <div class="six columns flex-container">
+          <p><label for="upload_bom_b">Select BOM B:</label><input type="file" name="file_b" class="file-upload-field" id="upload_bom_b" accept=".xlsx" required></p>
+        </div>
+      </div>
+      <div class="row flex-container">
+        <p><input type="submit" class="button-primary" value="Next Step"></p>
+      </div>
+      <span class="instruction">
+        <small><strong>&#8226; Instruction:</strong><em> Please select the BOMs you want to compare in Excel format. Only extension <strong style="color: red;">*.xlsx</strong> is accepted.</em></small>
+      </span>
+    </div> <!-- end form-group -->
+  </form>
+</div>
+{% endblock %}

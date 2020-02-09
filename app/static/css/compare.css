@@ -1,7 +1,4 @@
-body {
-    background-color: #ECF0F1;
-}
-
+/** GENERAL **/
 :root {
     --border-color: #11ADE1;
     --text-color: #11ADE1;
@@ -9,10 +6,10 @@ body {
 }
 
 .main {
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    margin-top: 50px;
-    box-shadow: 0 2px 3px 0 var(--shadow-color), 0 5px 5px 0 var(--shadow-color);
+    /*border: 1px solid var(--border-color);*/
+    /*border-radius: 5px;*/
+    margin-top: 30px;
+    /*box-shadow: 0 2px 3px 0 var(--shadow-color), 0 5px 5px 0 var(--shadow-color);*/
 }
 
 .main header {
@@ -26,9 +23,20 @@ body {
     text-decoration: none;
 }
 
-.upload-section {
+/* Common */ 
+.content {
     margin-top: 20px;
 }
+
+/* Home page */
+.home {
+    margin-top: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Upload */
 
 .upload-section form {
     margin-bottom: 0;
@@ -45,8 +53,28 @@ body {
 }
 
 .flex-container input.file-upload-field {
-    border: 1px solid var(--border-color);
     border-radius: 3px;
     padding: 5px;
 }
 
+/* Select sheet */
+
+/* Mapping Columns */
+.mapping-section .form-group-a {
+    padding-right: 80px;
+}
+
+.mapping-section .form-group-b {
+    padding-left: 80px;
+}
+
+
+.mapping-section .form-group p {
+    margin-bottom: 10px;
+}
+
+.next-step {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

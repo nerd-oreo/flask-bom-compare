@@ -1,19 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container upload-section">
-  <form method="POST" enctype="multipart/form-data" onsubmit="validateFileOnSubmit();">
-    <div class="row">
-      <div class="six columns flex-container">
-        <p><label for="upload_bom_a">BOM A:</label><input type="file" name="file_a" class="file-upload-field" id="upload_bom_a" accept=".xlsx" required></p>
-      </div>
-      <div class="six columns flex-container">
-        <p><label for="upload_bom_b">BOM B:</label><input type="file" name="file_b" class="file-upload-field" id="upload_bom_b" accept=".xlsx" required></p>
-      </div>
-    </div>
-    <div class="row flex-container">
-      <p><input type="submit" class="button-primary" value="Upload"></p>
-    </div>
-  </form>
-  <script src="{{ url_for('static', filename='js/form-validate.js') }}"></script>
-</div>
+  <div class="container home">
+    <a class="button button-primary"  href="{{ url_for('upload') }}">START</a>
+  </div>
 {% endblock %}

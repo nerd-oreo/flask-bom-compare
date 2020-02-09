@@ -1,4 +1,84 @@
 {% extends "base.html" %}
 {% block content %}
-  
+<div class="container mapping-section content">
+  <form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <div class="row">
+      <div class="six columns form-group form-group-a">
+        <label>BOM A</label>
+        <p>
+          <label>{{ form.select_col_level_a.label }}</label>
+          {{ form.select_col_level_a(class="u-full-width") }}
+        </p>
+        <p>
+          <label>{{ form.select_col_number_a.label }}</label>
+          {{ form.select_col_number_a(class="u-full-width") }}
+        </p>
+        <p>
+          <label>{{ form.select_col_desc_a.label }}</label>
+          {{ form.select_col_desc_a(class="u-full-width") }}
+        </p>
+        <p>
+          <label>{{ form.select_col_rev_a.label }}</label>
+          {{ form.select_col_rev_a(class="u-full-width") }}
+        </p>
+        <p>
+          <label>{{ form.select_col_qty_a.label }}</label>
+          {{ form.select_col_qty_a(class="u-full-width") }}
+        </p>
+        <p>
+          <label>{{ form.select_col_ref_des_a.label }}</label>
+          {{ form.select_col_ref_des_a(class="u-full-width") }}
+        </p>
+        <p>
+          <label>{{ form.select_col_mfg_name_a.label }}</label>
+          {{ form.select_col_mfg_name_a(class="u-full-width") }}
+        </p>
+        <p>
+          <label>{{ form.select_col_mfg_number_a.label }}</label>
+          {{ form.select_col_mfg_number_a(class="u-full-width") }}
+        </p>
+      </div>
+
+      <div class="six columns form-group form-group-b">
+        <label>BOM B</label>
+        <p>
+          <label>{{ form.select_col_level_b.label }}</label>
+          {{ form.select_col_level_b(class="u-full-width") }}
+        </p>
+        <p>
+          <label>{{ form.select_col_number_a.label }}</label>
+          {{ form.select_col_number_b(class="u-full-width") }}
+        </p>
+        <p>
+          <label>{{ form.select_col_desc_a.label }}</label>
+          {{ form.select_col_desc_b(class="u-full-width") }}
+        </p>
+        <p>
+          <label>{{ form.select_col_rev_a.label }}</label>
+          {{ form.select_col_rev_b(class="u-full-width") }}
+        </p>
+        <p>
+          <label>{{ form.select_col_qty_a.label }}</label>
+          {{ form.select_col_qty_b(class="u-full-width") }}
+        </p>
+        <p>
+          <label>{{ form.select_col_ref_des_a.label }}</label>
+          {{ form.select_col_ref_des_b(class="u-full-width") }}
+        </p>
+        <p>
+          <label>{{ form.select_col_mfg_name_a.label }}</label>
+          {{ form.select_col_mfg_name_b(class="u-full-width") }}
+        </p>
+        <p>
+          <label>{{ form.select_col_mfg_number_a.label }}</label>
+          {{ form.select_col_mfg_number_b(class="u-full-width") }}
+        </p>
+      </div>
+    </div>
+    <div class="row form-group next-step">
+      <p>{{ form.next_step(class="button-primary") }}</p>
+    </div>
+  </form>
+</div>
 {% endblock %}
