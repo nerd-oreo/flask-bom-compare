@@ -11,7 +11,9 @@
         <label for="select-worksheet-b">{{ form.select_sheet_b.label }}</label>
         {{ form.select_sheet_b(class="u-full-width") }}
       </p>
-      <p>{{ form.next_step(class="button-primary") }}</p>
+      <div class="row form-group next-step">
+        <p>{{ form.next_step(class="button-primary") }}</p>
+      </div>
     </form>
   </div>
 {% endblock %}

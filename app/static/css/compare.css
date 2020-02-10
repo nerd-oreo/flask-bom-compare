@@ -2,35 +2,37 @@
 :root {
     --border-color: #11ADE1;
     --text-color: #11ADE1;
-    --shadow-color: rgba(145, 145, 145, 0.3);
 }
 
-.main {
-    /*border: 1px solid var(--border-color);*/
-    /*border-radius: 5px;*/
-    margin-top: 30px;
-    /*box-shadow: 0 2px 3px 0 var(--shadow-color), 0 5px 5px 0 var(--shadow-color);*/
+ /** TOP CONTAINER **/
+.top {
+    margin-top: 5px;
+    border-bottom: 1px solid #D8D8D8;
+    display:flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.main header {
-    border-bottom: 1px solid var(--border-color);
+.top .wrapper header {
     text-align: center;
-    margin-top: 20px;
 }
 
-.main header h2 a {
-    color: var(--text-color);
-    text-decoration: none;
+.top .wrapper header h4 {
+    margin-bottom: 10px;
 }
 
-/* Common */ 
-.content {
-    margin-top: 20px;
+.top .wrapper nav a {
+    margin: 0px 10px 10px 10px;
+}
+
+/* MIDDLE CONTAINER */ 
+.middle {
+    margin-top: 30px;
 }
 
 /* Home page */
 .home {
-    margin-top: 100px;
+    margin-top: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -58,6 +60,20 @@
 }
 
 /* Select sheet */
+.select-sheet select {
+    width: 50%;
+}
+
+.select-sheet p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+}
+
+.select-sheet p label {
+    padding-right: 10px;
+}
 
 /* Mapping Columns */
 .mapping-section .form-group-a {

@@ -4,17 +4,13 @@ from app import app
 from app.utils import allowed_file, map_header_to_letter, get_worksheet_choices
 from app.forms import SelectSheetForm, MappingHeaderForm
 from app.bom import Bom
+from app.profile import Profile
 import os
 
 BOM = dict()
 
 
-@app.route('/')
-@app.route('/home')
-def home():
-    return render_template('home.html')
-
-
+@app.route('/', methods=['GET', 'POST'])
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
@@ -80,8 +76,48 @@ def mapping():
         form.select_col_mfg_number_b.choices = choices_b
 
         if form.validate_on_submit():
-            pass
+            level = form.select_col_level_a.data
+            number = form.select_col_number_a.data
+            description = form.select_col_desc_a.data
+            rev = form.select_col_rev_a.data
+            qty = form.select_col_qty_a.data
+            ref_des = form.select_col_ref_des_a.data
+            mfg_name = form.select_col_mfg_name_a.data
+            mfg_number = form.select_col_mfg_number_a.data
+            BOM['A'].set_header_list(level, number, description, rev, qty, ref_des, mfg_name, mfg_number)
 
+            level = form.select_col_level_b.data
+            number = form.select_col_number_b.data
+            description = form.select_col_desc_b.data
+            rev = form.select_col_rev_b.data
+            qty = form.select_col_qty_b.data
+            ref_des = form.select_col_ref_des_b.data
+            mfg_name = form.select_col_mfg_name_b.data
+            mfg_number = form.select_col_mfg_number_b.data
+            BOM['B'].set_header_list(level, number, description, rev, qty, ref_des, mfg_name, mfg_number)
+
+            BOM['A'].load_excel()
+            BOM['B'].load_excel()
+
+            return redirect(url_for('profile_processing'))
         return render_template('mapping.html', form=form)
     except KeyError:
         return redirect(url_for('upload'))
+
+
+@app.route('/profile/processing')
+def profile_processing():
+    profile = Profile()
+    profile.set_profile('LP_make', 'parent', 'LFLIEP', '/', '-', 'add', '0800-OPS1-MDF')
+    BOM['B'].profile_list.append(profile)
+    profile_2 = Profile()
+    profile_2.set_profile('LP_buy', 'child', 'LFLIE', '/', '-', 'add', '0800-OPS1-MDF')
+    BOM['B'].profile_list.append(profile_2)
+
+    BOM['B'].apply_profile()
+    BOM['B'].update()
+
+    for key in BOM['B'].uid_bom:
+        print('Key: {}\n{}'.format(key, BOM['B'].bom[key]))
+
+    return redirect(url_for('upload'))
