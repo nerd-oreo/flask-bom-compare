@@ -63,15 +63,17 @@ def mapping():
         form.select_col_rev_a.choices = choices_a
         form.select_col_qty_a.choices = choices_a
         form.select_col_ref_des_a.choices = choices_a
+        form.select_col_ref_des_delimiter_a.choices = [('COMMA', 'COMMA'), ('SPACE', 'SPACE')]
         form.select_col_mfg_name_a.choices = choices_a
         form.select_col_mfg_number_a.choices = choices_a
-
+        
         form.select_col_level_b.choices = choices_b
         form.select_col_number_b.choices = choices_b
         form.select_col_desc_b.choices = choices_b
         form.select_col_rev_b.choices = choices_b
         form.select_col_qty_b.choices = choices_b
         form.select_col_ref_des_b.choices = choices_b
+        form.select_col_ref_des_delimiter_b.choices = [('COMMA', 'COMMA'), ('SPACE', 'SPACE')]
         form.select_col_mfg_name_b.choices = choices_b
         form.select_col_mfg_number_b.choices = choices_b
 
@@ -82,9 +84,11 @@ def mapping():
             rev = form.select_col_rev_a.data
             qty = form.select_col_qty_a.data
             ref_des = form.select_col_ref_des_a.data
+            ref_des_delimiter = form.select_col_ref_des_delimiter_a.data
             mfg_name = form.select_col_mfg_name_a.data
             mfg_number = form.select_col_mfg_number_a.data
-            BOM['A'].set_header_list(level, number, description, rev, qty, ref_des, mfg_name, mfg_number)
+            
+            BOM['A'].set_header_list(level, number, description, rev, qty, ref_des, ref_des_delimiter, mfg_name, mfg_number)
 
             level = form.select_col_level_b.data
             number = form.select_col_number_b.data
@@ -92,9 +96,10 @@ def mapping():
             rev = form.select_col_rev_b.data
             qty = form.select_col_qty_b.data
             ref_des = form.select_col_ref_des_b.data
+            ref_des_delimiter = form.select_col_ref_des_delimiter_b.data
             mfg_name = form.select_col_mfg_name_b.data
             mfg_number = form.select_col_mfg_number_b.data
-            BOM['B'].set_header_list(level, number, description, rev, qty, ref_des, mfg_name, mfg_number)
+            BOM['B'].set_header_list(level, number, description, rev, qty, ref_des, ref_des_delimiter, mfg_name, mfg_number)
 
             BOM['A'].load_excel()
             BOM['B'].load_excel()
