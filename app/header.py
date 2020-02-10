@@ -6,5 +6,6 @@ class Header:
         self.rev = ''
         self.qty = ''
         self.ref_des = ''
+        self.ref_des_delimiter = ''
         self.mfg_name = ''
         self.mfg_number = ''

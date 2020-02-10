@@ -18,13 +18,14 @@ class Bom:
         self.bom = dict()  # {unique_id:item}
         self.uid_bom = list()  # unique id list for bom A
 
-    def set_header_list(self, level, number, description, rev, qty, ref_des, mfg_name, mfg_number):
+    def set_header_list(self, level, number, description, rev, qty, ref_des, ref_des_delimiter,mfg_name, mfg_number):
         self.header.level = level
         self.header.number = number
         self.header.description = description
         self.header.rev = rev
         self.header.qty = qty
         self.header.ref_des = ref_des
+        self.header.ref_des_delimiter = str(ref_des_delimiter)
         self.header.mfg_name = mfg_name
         self.header.mfg_number = mfg_number
 
@@ -56,7 +57,12 @@ class Bom:
 
                 if ws[self.header.ref_des + str(row)].value is not None:
                     ref_des = str(ws[self.header.ref_des + str(row)].value)
-                    item.set_ref_des(ref_des)
+                    delimiter = ''
+                    if self.header.ref_des_delimiter == 'COMMA':
+                        delimiter = ','
+                    elif self.header.ref_des_delimiter == 'SPACE':
+                        delimiter = ' '
+                    item.set_ref_des(ref_des, delimiter)
 
                 if ws[self.header.mfg_name + str(row)].value is not None and ws[self.header.mfg_number + str(row)].value is not None:
                     mfg_name = str(ws[self.header.mfg_name + str(row)].value)

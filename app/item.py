@@ -41,9 +41,9 @@ class Item:
         else:
             self.unique_id = '{}:{}:{}:{}'.format(self.parent.level, self.parent.number, self.level, self.number)
 
-    def set_ref_des(self, ref_des):
+    def set_ref_des(self, ref_des, delimiter):
         if ref_des is not None:
-            self.ref_des = ref_des.split(',')
+            self.ref_des = ref_des.split(delimiter)
 
     def set_avl(self, mfg_name, mfg_number):
         temp = {mfg_name: mfg_number}
