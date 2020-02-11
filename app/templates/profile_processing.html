@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container content">
+
+<div class="container profile-processing-list">
+  <div class="row">
+    <div class="six columns left">
+      {% if profiles %}
+        <header><h4>Profiles</h4></header>
+        <div class="scroll-container">
+        {% for profile in profiles %}
+          <p></p><label for="profile-{{ profile.id }}"><input type="checkbox" name="profile-{{ profile.id }}" value="{{ profile.id }}"> {{ profile.name }} - {{ profile.type }}</label></p> 
+        {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+    
+    <div class="six columns right">
+      {% if bom_index %}
+      <header><h4>BOM</h4></header>
+      <label for="bom-index">Apply to</label>
+      <select id="bom-index">
+        {% for i in bom_index %}
+        <option value="{{ i }}">{{ i }}</option>
+        {% endfor %}
+      </select>
+      <br>
+      <a class="button button-primary" href="">APPLY</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+
+  <div class="container next-step">
+    <a class="button button-primary" href="">NEXT STEP</a>
+  </div>
+</div>
+{% endblock content %}

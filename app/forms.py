@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField
 from wtforms.validators import DataRequired
 
+from app.models import Profile
 
 class SelectSheetForm(FlaskForm):
     select_sheet_a = SelectField('Select worksheet contain BOM A', validators=[DataRequired()])
@@ -30,3 +31,19 @@ class MappingHeaderForm(FlaskForm):
     select_col_mfg_name_b = SelectField('Manufacturer Name', validators=[DataRequired()])
     select_col_mfg_number_b = SelectField('Manufacturer Part Number', validators=[DataRequired()])
     next_step = SubmitField('NEXT STEP')
+    
+    
+class NewProfileForm(FlaskForm):
+    name = StringField('Profile Name', validators=[DataRequired()])
+    type = SelectField('Type', choices=[('parent','parent'),('child','child')], validators=[DataRequired()])
+    prefix = StringField('Prefix')
+    suffix = StringField('Suffix')
+    delimiter = StringField('Delimiter')
+    action = SelectField('Action on Delimiter', choices=[('add','add'), ('not apply', 'not apply')],validators=[DataRequired()])
+    sample = StringField('Sample')
+    add = SubmitField('Add Profile')
+    
+    def validate_profile_name(self, name):
+        name = Profile.query.filter_by(name=name.data).first()
+        if name is not None:
+            raise ValidationError('Profile name already exist!')

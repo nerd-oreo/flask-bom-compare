@@ -1,10 +1,11 @@
 from flask import render_template, url_for, redirect, request, flash
 from werkzeug.utils import secure_filename
-from app import app
+from app import app, db
 from app.utils import allowed_file, map_header_to_letter, get_worksheet_choices
-from app.forms import SelectSheetForm, MappingHeaderForm
+from app.forms import SelectSheetForm, MappingHeaderForm, NewProfileForm
 from app.bom import Bom
 from app.profile import Profile
+from app.models import Profile as mProfile
 import os
 
 BOM = dict()
@@ -110,8 +111,66 @@ def mapping():
         return redirect(url_for('upload'))
 
 
+@app.route('/profile/manage')
+def profile_manage():
+    profiles = mProfile.query.all()
+    return render_template('profile_manage.html', profiles=profiles)
+
+
+@app.route('/profile/add', methods=['GET', 'POST'])
+def profile_add():
+    form = NewProfileForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        type = form.type.data
+        prefix = form.prefix.data
+        suffix = form.suffix.data
+        delimiter = form.delimiter.data
+        action = form.action.data
+        sample = form.sample.data
+        profile = mProfile(name=name, type=type, prefix=prefix, suffix=suffix, delimiter=delimiter, action=action, sample=sample)
+        db.session.add(profile)
+        db.session.commit()
+        return redirect(url_for('profile_manage'))
+    return render_template('profile_add.html', form=form)
+
+
+@app.route('/profile/modify/<id>', methods=['GET','POST'])
+def profile_modify(id):
+    profile = mProfile.query.filter_by(id=id).first()
+    form = NewProfileForm()
+    if form.validate_on_submit():
+        profile.name = form.name.data
+        profile.type = form.type.data
+        profile.prefix = form.prefix.data
+        profile.suffix = form.suffix.data
+        profile.delimiter = form.delimiter.data
+        profile.action = form.action.data
+        profile.sample = form.sample.data
+        db.session.commit()
+        return redirect(url_for('profile_manage'))
+    elif request.method == 'GET':
+        form.name.data = profile.name
+        form.type.data = profile.type
+        form.prefix.data = profile.prefix
+        form.suffix.data = profile.suffix
+        form.delimiter.data = profile.delimiter
+        form.action.data  = profile.action
+        form.sample.data = profile.sample
+    return render_template('profile_modify.html', form=form)
+
+
+@app.route('/profile/delete/<id>')
+def profile_delete(id):
+    profile = mProfile.query.filter_by(id=id).first()
+    db.session.delete(profile)
+    db.session.commit()
+    return redirect(url_for('profile_manage'))
+
+
 @app.route('/profile/processing')
 def profile_processing():
+    '''
     profile = Profile()
     profile.set_profile('LP_make', 'parent', 'LFLIEP', '/', '-', 'add', '0800-OPS1-MDF')
     BOM['B'].profile_list.append(profile)
@@ -124,5 +183,7 @@ def profile_processing():
 
     for key in BOM['B'].uid_bom:
         print('Key: {}\n{}'.format(key, BOM['B'].bom[key]))
-
-    return redirect(url_for('upload'))
+    '''
+    profiles = mProfile.query.all()
+    bom_index = ['A', 'B']
+    return render_template('profile_processing.html', profiles=profiles, bom_index=bom_index)

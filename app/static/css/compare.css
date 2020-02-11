@@ -94,3 +94,31 @@
     justify-content: center;
     align-items: center;
 }
+
+/** PROFILE PAGE **/
+.profiles-table th, td {
+    text-align: center;
+}
+
+.profiles-table tbody {
+    height: 250px;
+    overflow-y: auto;
+}
+
+.profiles-table td .action {
+    padding: 0 10px;
+}
+
+.profile-add-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* PROFILE PROCESSING PAGE */
+.profile-processing-list .right {
+    justify-content: center;
+    align-items: center;
+    padding-left: 180px;
+}
