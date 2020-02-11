@@ -93,16 +93,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 10px;
 }
 
 /** PROFILE PAGE **/
 .profiles-table th, td {
     text-align: center;
-}
-
-.profiles-table tbody {
-    height: 250px;
-    overflow-y: auto;
 }
 
 .profiles-table td .action {
@@ -117,8 +113,26 @@
 
 
 /* PROFILE PROCESSING PAGE */
-.profile-processing-list .right {
+.scroll-container {
+    border: 1px solid #D6D6D6;
+    height: 200px;
+    padding: 20px;
+    overflow-y: scroll;
+}
+
+.scroll-container label {
+    border-bottom: 1px solid #D6D6D6;
+}
+
+.scroll-container label:nth-child(even) {
+    margin-top: 15px;
+}
+
+.button-list-middle {
+    display: flex;
     justify-content: center;
-    align-items: center;
-    padding-left: 180px;
+}
+
+.button-list-middle select, button {
+    margin: 10px;
 }

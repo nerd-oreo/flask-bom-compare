@@ -168,7 +168,7 @@ def profile_delete(id):
     return redirect(url_for('profile_manage'))
 
 
-@app.route('/profile/processing')
+@app.route('/profile/processing', methods=['GET', 'POST'])
 def profile_processing():
     '''
     profile = Profile()
@@ -184,6 +184,10 @@ def profile_processing():
     for key in BOM['B'].uid_bom:
         print('Key: {}\n{}'.format(key, BOM['B'].bom[key]))
     '''
+    if request.method == 'POST':
+        profile_data = request.form['profile_data']
+        print('profile_data: {}'.format(profile_data))
+        return 'Data received!'
     profiles = mProfile.query.all()
     bom_index = ['A', 'B']
     return render_template('profile_processing.html', profiles=profiles, bom_index=bom_index)
