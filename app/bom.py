@@ -17,8 +17,9 @@ class Bom:
         self.profile_list = list()
         self.bom = dict()  # {unique_id:item}
         self.uid_bom = list()  # unique id list for bom A
+        self.has_avl = True
 
-    def set_header_list(self, level, number, description, rev, qty, ref_des, ref_des_delimiter,mfg_name, mfg_number):
+    def set_header_list(self, level, number, description, rev, qty, ref_des, ref_des_delimiter, mfg_name, mfg_number):
         self.header.level = level
         self.header.number = number
         self.header.description = description
@@ -26,8 +27,11 @@ class Bom:
         self.header.qty = qty
         self.header.ref_des = ref_des
         self.header.ref_des_delimiter = str(ref_des_delimiter)
-        self.header.mfg_name = mfg_name
-        self.header.mfg_number = mfg_number
+        if mfg_name != 'NO AVL' and mfg_number != 'NO AVL':
+            self.header.mfg_name = mfg_name
+            self.header.mfg_number = mfg_number
+        else:
+            self.has_avl = False
 
     def load_excel(self):
         parent_stack = list()
@@ -40,7 +44,6 @@ class Bom:
         min_row = 2
         max_row = ws.max_row
         for row in range(min_row, max_row):
-            print("Row: {} - Max Row: {}".format(row, max_row))
             level = ws[self.header.level + str(row)].value
 
             if level is not None:
@@ -64,10 +67,11 @@ class Bom:
                         delimiter = ' '
                     item.set_ref_des(ref_des, delimiter)
 
-                if ws[self.header.mfg_name + str(row)].value is not None and ws[self.header.mfg_number + str(row)].value is not None:
-                    mfg_name = str(ws[self.header.mfg_name + str(row)].value)
-                    mfg_number = str(ws[self.header.mfg_number + str(row)].value)
-                    item.set_avl(mfg_name, mfg_number)
+                if self.has_avl:
+                    if ws[self.header.mfg_name + str(row)].value is not None and ws[self.header.mfg_number + str(row)].value is not None:
+                        mfg_name = str(ws[self.header.mfg_name + str(row)].value)
+                        mfg_number = str(ws[self.header.mfg_number + str(row)].value)
+                        item.set_avl(mfg_name, mfg_number)
 
                 if item.level == 0:  # top level
                     current_parent = item
@@ -91,21 +95,25 @@ class Bom:
                 last_item = item
 
             else:  # if level is None type, only collect data from column V and X
-                mfg_name = str(ws[self.header.mfg_name + str(row)].value)
-                mfg_number = str(ws[self.header.mfg_number + str(row)].value)
+                if self.has_avl:
+                    mfg_name = str(ws[self.header.mfg_name + str(row)].value)
+                    mfg_number = str(ws[self.header.mfg_number + str(row)].value)
 
-                key = self.uid_bom[len(self.uid_bom) - 1]
-                item = self.bom[key]
-                item.set_avl(mfg_name, mfg_number)
-                self.bom.update({key: item})
+                    key = self.uid_bom[len(self.uid_bom) - 1]
+                    item = self.bom[key]
+                    item.set_avl(mfg_name, mfg_number)
+                    self.bom.update({key: item})
 
     def apply_profile(self):
-        for key in self.uid_bom:
-            item = self.bom[key]
-            for profile in self.profile_list:
-                if item.type is profile.type:
-                    item.number = profile.apply(item.number)
-            self.bom.update({key: item})
+        if len(self.profile_list) > 0:
+            for key in self.uid_bom:
+                item = self.bom[key]
+                for i in range(0, len(self.profile_list)):
+                    profile = self.profile_list[i]
+                    if item.type == profile.type:
+                        item.number = profile.apply(item.number)
+                self.bom.update({key: item})
+            self.update()
 
     def update(self):
         temp_bom = dict()

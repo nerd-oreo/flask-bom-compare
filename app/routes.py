@@ -4,8 +4,9 @@ from app import app, db
 from app.utils import allowed_file, map_header_to_letter, get_worksheet_choices
 from app.forms import SelectSheetForm, MappingHeaderForm, NewProfileForm
 from app.bom import Bom
-from app.profile import Profile
+from app.profile import Profile as pProfile
 from app.models import Profile as mProfile
+import json
 import os
 
 BOM = dict()
@@ -105,7 +106,7 @@ def mapping():
             BOM['A'].load_excel()
             BOM['B'].load_excel()
 
-            return redirect(url_for('profile_processing'))
+            return redirect(url_for('profile_apply'))
         return render_template('mapping.html', form=form)
     except KeyError:
         return redirect(url_for('upload'))
@@ -121,14 +122,19 @@ def profile_manage():
 def profile_add():
     form = NewProfileForm()
     if form.validate_on_submit():
-        name = form.name.data
-        type = form.type.data
+        profile_name = form.profile_name.data
+        item_type = form.item_type.data
+        customer = form.customer.data
         prefix = form.prefix.data
+        prefix_action = form.prefix_action.data
         suffix = form.suffix.data
+        suffix_action = form.suffix_action.data
         delimiter = form.delimiter.data
-        action = form.action.data
-        sample = form.sample.data
-        profile = mProfile(name=name, type=type, prefix=prefix, suffix=suffix, delimiter=delimiter, action=action, sample=sample)
+        delimiter_action = form.delimiter_action.data
+        delimiter_sample = form.delimiter_sample.data
+        profile = mProfile(profile_name=profile_name, item_type=item_type, customer=customer, prefix=prefix, prefix_action=prefix_action,
+                           suffix=suffix, suffix_action=suffix_action, delimiter=delimiter, delimiter_action=delimiter_action,
+                           delimiter_sample=delimiter_sample)
         db.session.add(profile)
         db.session.commit()
         return redirect(url_for('profile_manage'))
@@ -140,23 +146,29 @@ def profile_modify(id):
     profile = mProfile.query.filter_by(id=id).first()
     form = NewProfileForm()
     if form.validate_on_submit():
-        profile.name = form.name.data
-        profile.type = form.type.data
+        profile.profile_name = form.profile_name.data
+        profile.item_type = form.item_type.data
+        profile.customer = form.customer.data
         profile.prefix = form.prefix.data
+        profile.prefix_action = form.prefix_action.data
         profile.suffix = form.suffix.data
+        profile.suffix_action = form.suffix_action.data
         profile.delimiter = form.delimiter.data
-        profile.action = form.action.data
-        profile.sample = form.sample.data
+        profile.delimiter_action = form.delimiter_action.data
+        profile.delimiter_sample = form.delimiter_sample.data
         db.session.commit()
         return redirect(url_for('profile_manage'))
     elif request.method == 'GET':
-        form.name.data = profile.name
-        form.type.data = profile.type
+        form.profile_name.data = profile.profile_name
+        form.item_type.data = profile.item_type
+        form.customer.data = profile.customer
         form.prefix.data = profile.prefix
+        form.prefix_action.data = profile.prefix_action
         form.suffix.data = profile.suffix
+        form.suffix_action.data = profile.suffix_action
         form.delimiter.data = profile.delimiter
-        form.action.data  = profile.action
-        form.sample.data = profile.sample
+        form.delimiter_action.data = profile.delimiter_action
+        form.delimiter_sample.data = profile.delimiter_sample
     return render_template('profile_modify.html', form=form)
 
 
@@ -168,29 +180,68 @@ def profile_delete(id):
     return redirect(url_for('profile_manage'))
 
 
-@app.route('/profile/processing', methods=['GET', 'POST'])
-def profile_processing():
-    '''
-    profile = Profile()
-    profile.set_profile('LP_make', 'parent', 'LFLIEP', '/', '-', 'add', '0800-OPS1-MDF')
-    BOM['B'].profile_list.append(profile)
-    profile_2 = Profile()
-    profile_2.set_profile('LP_buy', 'child', 'LFLIE', '/', '-', 'add', '0800-OPS1-MDF')
-    BOM['B'].profile_list.append(profile_2)
+@app.route('/profile/apply', methods=['GET', 'POST'])
+def profile_apply():
+    try:
+        if request.method == 'POST':
+            profile_data = json.loads(request.form['profile_data'])
+            if profile_data['action'] == 'add':
+                profile_id = int(profile_data['profile_id'])
+                index = profile_data['bom_index']
+                p = mProfile.query.filter_by(id=profile_id).first()
+                profile = pProfile()
+                profile.set_profile(p.profile_name, p.item_type, p.customer, p.prefix, p.prefix_action, p.suffix,
+                                    p.suffix_action, p.delimiter, p.delimiter_action, p.delimiter_sample)
+                BOM[index].profile_list.append(profile)
+                print(BOM[index].profile_list)
+            elif profile_data['action'] == 'remove':
+                index = profile_data['bom_index']
+                BOM[index].profile_list.pop()
+                print(BOM[index].profile_list)
+        profiles = mProfile.query.all()
+        bom_index = ['A', 'B']
+        return render_template('profile_apply.html', profiles=profiles, bom_index=bom_index)
+    except KeyError:
+        return redirect(url_for('upload'))
 
+
+@app.route('/profile/processing')
+def profile_processing():
+    BOM['A'].apply_profile()
     BOM['B'].apply_profile()
-    BOM['B'].update()
+    for key in BOM['A'].uid_bom:
+        print('Key: {}\n{}'.format(key, BOM['A'].bom[key]))
 
     for key in BOM['B'].uid_bom:
         print('Key: {}\n{}'.format(key, BOM['B'].bom[key]))
-    '''
+    return redirect(url_for('compare'))
+
+
+@app.route('/profile/test', methods=['GET', 'POST'])
+def profile_test():
     if request.method == 'POST':
-        profile_data = request.form['profile_data']
-        print(type(profile_data))
-        if profile_data['action'] is 'add':
-            print('add');
-        elif profile_data['action'] is 'remove':
-            print('remove')
-    profiles = mProfile.query.all()
-    bom_index = ['A', 'B']
-    return render_template('profile_processing.html', profiles=profiles, bom_index=bom_index)
+        try:
+            test_data = json.loads(request.form['test_data'])
+            test_profile = pProfile();
+            test_profile.set_profile(
+                profile_name=test_data['profile_name'],
+                item_type=test_data['item_type'],
+                customer=test_data['customer'],
+                prefix=test_data['prefix'],
+                prefix_action=test_data['prefix_action'],
+                suffix=test_data['suffix'],
+                suffix_action=test_data['suffix_action'],
+                delimiter=test_data['delimiter'],
+                delimiter_action=test_data['delimiter_action'],
+                delimiter_sample=test_data['delimiter_sample'])
+            result = test_profile.apply(test_data['test_input'])
+            return result
+        except KeyError as e:
+            print(e)
+            return ''
+
+
+@app.route('/compare')
+def compare():
+    return "Compare"
+

@@ -7,6 +7,7 @@ ALLOWED_EXTENSIONS = {'xlsx'}
 def map_header_to_letter(filename, sheet_name):
     header_list = list()
     header_list.append(('', ''))
+    header_list.append(('NO AVL', 'NO AVL'))
     wb = load_workbook(filename=filename, read_only=False)
 
     ws = wb[sheet_name]

@@ -35,17 +35,14 @@ class MappingHeaderForm(FlaskForm):
 
 
 class NewProfileForm(FlaskForm):
-    name = StringField('Profile Name', validators=[DataRequired()])
-    type = SelectField('Type', choices=[('parent', 'parent'), ('child', 'child')], validators=[DataRequired()])
+    profile_name = StringField('Profile Name', validators=[DataRequired()])
+    item_type = SelectField('Item Type', choices=[('parent', 'parent'), ('child', 'child')], validators=[DataRequired()])
+    customer = StringField('Customer')
     prefix = StringField('Prefix')
+    prefix_action = SelectField('Prefix Action', choices=[('not apply', 'not apply'), ('add', 'add'), ('remove', 'remove'), ('ignore', 'ignore')], validators=[DataRequired()])
     suffix = StringField('Suffix')
+    suffix_action = SelectField('Suffix Action', choices=[('not apply', 'not apply'), ('add', 'add'), ('remove', 'remove')], validators=[DataRequired()])
     delimiter = StringField('Delimiter')
-    action = SelectField('Action on Delimiter', choices=[('not apply', 'not apply'), ('add', 'add'), ('remove', 'remove')], validators=[DataRequired()])
-    sample = StringField('Sample')
-    add = SubmitField('Add Profile')
-    
-    @staticmethod
-    def validate_profile_name(name):
-        name = Profile.query.filter_by(name=name.data).first()
-        if name is not None:
-            raise Exception('Profile name already exist!')
+    delimiter_action = SelectField('Delimiter Action', choices=[('not apply', 'not apply'), ('add', 'add'), ('remove', 'remove')], validators=[DataRequired()])
+    delimiter_sample = StringField('Delimiter Sample')
+    add_profile = SubmitField('Add Profile')

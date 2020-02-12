@@ -3,37 +3,37 @@
 <div class="container content">
   <form action="" method="POST">
     {{ form.hidden_tag() }}
-    <p>
-      <label>{{ form.name.label }}</label>
-      {{ form.name(class="u-full-width") }}
-    </p>
-    <p>
-      <label>{{ form.type.label }}</label>
-      {{ form.type(class="u-full-width") }}
-    </p>
-    <p>
-      <label>{{ form.prefix.label }}</label>
-      {{ form.prefix(class="u-full-width") }}
-    </p>
-    <p>
-      <label>{{ form.suffix.label }}</label>
-      {{ form.suffix(class="u-full-width") }}
-    </p>
-    <p>
-      <label>{{ form.delimiter.label }}</label>
-      {{ form.delimiter(class="u-full-width") }}
-    </p>
-    <p>
-      <label>{{ form.action.label }}</label>
-      {{ form.action(class="u-full-width") }}
-    </p>
-    <p>
-      <label>{{ form.sample.label }}</label>
-      {{ form.sample(class="u-full-width") }}
-    </p>
+      <div class="row">
+        <div class="four columns"><p><label>{{ form.profile_name.label }}</label>{{ form.profile_name(class="u-full-width", id="profile-name") }}</p></div>
+        <div class="four columns"><p><label>{{ form.customer.label }}</label>{{ form.customer(class="u-full-width", id="customer") }}</p></div>
+        <div class="four columns"><p><label>{{ form.item_type.label }}</label>{{ form.item_type(class="u-full-width", id="item-type") }}</p></div>
+      </div>
+
+      <div class="row">
+        <div class="six columns"><p><label>{{ form.prefix.label }}</label>{{ form.prefix(class="u-full-width", id="prefix") }}</p></div>
+        <div class="six columns"><p><label>{{ form.prefix_action.label }}</label>{{ form.prefix_action(class="u-full-width", id="prefix-action") }}</p></div>
+      </div>
+
+      <div class="row">
+        <div class="six columns"><p><label>{{ form.suffix.label }}</label>{{ form.suffix(class="u-full-width", id="suffix") }}</p></div>
+        <div class="six columns"><p><label>{{ form.suffix_action.label }}</label>{{ form.suffix_action(class="u-full-width", id="suffix-action") }}</p></div>
+      </div>
+
+      <div class="row">
+        <div class="four columns"><p><label>{{ form.delimiter.label }}</label>{{ form.delimiter(class="u-full-width", id="delimiter") }}</p></div>
+        <div class="four columns"><p><label>{{ form.delimiter_action.label }}</label>{{ form.delimiter_action(class="u-full-width", id="delimiter-action") }}</p></div>
+        <div class="four columns"><p><label>{{ form.delimiter_sample.label }}</label>{{ form.delimiter_sample(class="u-full-width", id="delimiter-sample") }}</p></div>
+      </div>
+      <div class="row profile-test-section">
+        <div class="four columns"><p><label>Test</label><input type="text" class="u-full-width" id="profile-test-input"></p></div>
+        <div class="four columns"><p><label>Result</label><input type="text" class="u-full-width" id="profile-result" readonly=""></p></div>
+        <div class="four columns"><p><input type="button" class="button-primary" id="profile-test-btn" onclick="profile_test();" value="TEST PROFILE"></p></div>
+      </div>
+
     <div class="container next-step">
-      {{ form.add(class="button-primary") }}
+      {{ form.add_profile(class="button-primary") }}
     </div>
   </form>
+  <script src="{{ url_for('static', filename='js/profile_test.js') }}"></script>
 </div>
 {% endblock content %}

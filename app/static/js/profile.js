@@ -11,7 +11,7 @@ $(document).ready(function () {
         var bottom_profile = $('.profile-list-bottom .scroll-container').find('.'+profile_class);
         var bom_index = $('#bom-index').val();
         var json_string = get_json_string(bom_index, profile_id, 'add');
-        send(json_string, '/profile/processing');
+        send(json_string, '/profile/apply');
         checkbox.prop('checked', false);
         parent.css('display','none');
         bottom_profile.css('display', 'block');
@@ -35,7 +35,7 @@ $(document).ready(function () {
             var bottom_profile = $('.profile-list-top .scroll-container').find('.'+profile_class);
             var bom_index = $('#bom-index').val();
             var json_string = get_json_string(bom_index, profile_id, 'remove');
-            send(json_string, '/profile/processing');
+            send(json_string, '/profile/apply');
             checkbox.prop('checked', false);
             parent.css('display','none');
             bottom_profile.css('display', 'block');

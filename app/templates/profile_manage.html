@@ -1,37 +1,33 @@
 {% extends "base.html" %}
 {% block content %}
 {% if profiles %}
-<table class="u-full-width profiles-table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Prefix</th>
-      <th>Suffix</th>
-      <th>Delimiter</th>
-      <th>Profile Action</th>
-      <th>Sample</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  
-  <tbody>
-  {% for profile in profiles %}
-  <tr>
-    <td>{{ profile.name }}</td>
-    <td>{{ profile.type }}</td>
-    <td>{{ profile.prefix }}</td>
-    <td>{{ profile.suffix }}</td>
-    <td>{{ profile.delimiter }}</td>
-    <td>{{ profile.action }}</td>
-    <td>{{ profile.sample }}</td>
-    <td><a class="button button-primary action" href="{{ url_for('profile_modify', id=profile.id) }}">Modify</a>&nbsp;|&nbsp;<a class="button button-primary action" href="{{ url_for('profile_delete', id=profile.id) }}">Delete</a></td>
-  </tr>
-  {% endfor %}
-  </tbody>
-</table>
-{% endif %}
-<div class="container profile-add-section">
-<p><a class="button button-primary" href="{{ url_for('profile_add') }}">Add New Profile</a></p>
+<div class="row">
+  <div class="four columns">
+    <div class="container profile-add-section"><p><a class="button button-primary" href="{{ url_for('profile_add') }}">Add New Profile</a></p></div>
+  </div>
+  <div class="eight columns">
+    <table class="u-full-width profiles-table">
+      <thead>
+        <tr>
+          <th>Profile Name</th>
+          <th>Item Type</th>
+          <th>Customer</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      
+      <tbody>
+      {% for profile in profiles %}
+      <tr>
+        <td>{{ profile.profile_name }}</td>
+        <td>{{ profile.item_type }}</td>
+        <td>{{ profile.customer }}</td>
+        <td><a class="button button-primary action" href="{{ url_for('profile_modify', id=profile.id) }}">Modify</a>&nbsp;|&nbsp;<a class="button button-primary action" href="{{ url_for('profile_delete', id=profile.id) }}">Delete</a></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
+{% endif %}
 {% endblock %}

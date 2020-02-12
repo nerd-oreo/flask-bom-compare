@@ -5,7 +5,7 @@
         {% if profiles %}
           <div class="scroll-container">
           {% for profile in profiles %}
-            <span class="profile-{{ profile.id }}"><label for="profile-{{ profile.id }}"><input type="checkbox" id="profile-{{ profile.id }}" value="{{ profile.id }}"> {{ profile.name }} - {{ profile.type }}</label></span>
+            <span class="profile-{{ profile.id }}"><label for="profile-{{ profile.id }}"><input type="checkbox" id="profile-{{ profile.id }}" value="{{ profile.id }}">{{ profile.profile_name }} - {{ profile.customer }}</label></span>
           {% endfor %}
           </div>
         {% endif %}
@@ -27,13 +27,13 @@
         {% if profiles %}
           <div class="scroll-container">
           {% for profile in profiles %}
-            <span class="profile-{{ profile.id }}" style="display:none;"><label for="profile-{{ profile.id }}"><input type="checkbox" id="profile-{{ profile.id }}" value="{{ profile.id }}"> {{ profile.name }} - {{ profile.type }}</label></span>
+            <span class="profile-{{ profile.id }}" style="display:none;"><label for="profile-{{ profile.id }}"><input type="checkbox" id="profile-{{ profile.id }}" value="{{ profile.id }}">{{ profile.profile_name }} - {{ profile.customer }}</label></span>
           {% endfor %}
           </div>
         {% endif %}
       </div>
   <div class="container next-step">
-    <a class="button button-primary" href="">NEXT STEP</a>
+    <a class="button button-primary" href="{{ url_for('profile_processing') }}">NEXT STEP</a>
   </div>
 </div>
 <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
