@@ -186,8 +186,11 @@ def profile_processing():
     '''
     if request.method == 'POST':
         profile_data = request.form['profile_data']
-        print('profile_data: {}'.format(profile_data))
-        return 'Data received!'
+        print(type(profile_data))
+        if profile_data['action'] is 'add':
+            print('add');
+        elif profile_data['action'] is 'remove':
+            print('remove')
     profiles = mProfile.query.all()
     bom_index = ['A', 'B']
     return render_template('profile_processing.html', profiles=profiles, bom_index=bom_index)
