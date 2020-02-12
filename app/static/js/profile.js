@@ -19,11 +19,32 @@ $(document).ready(function () {
       }
     });
     if(error == true) {
-      alert('Please choose a profile!');
+      alert('Please choose a profile to add!');
     }
   });
 
   // handle remove button
+  $('#remove-profile').click(function (event) {
+    var error = true;
+    $('.profile-list-bottom .scroll-container').children().each(function () {
+        var checkbox = $(this).children().children();
+        if(checkbox.prop('checked')) {
+            var profile_id = checkbox.val();
+            var parent = checkbox.parent().parent();
+            var profile_class = parent.attr('class');
+            var bottom_profile = $('.profile-list-top .scroll-container').find('.'+profile_class);
+            var bom_index = $('#bom-index').val();
+            var json_string = get_json_string(bom_index, profile_id, 'remove');
+            send(json_string, '/profile/processing');
+            checkbox.prop('checked', false);
+            parent.css('display','none');
+            bottom_profile.css('display', 'block');
+            error = false;
+        }
+    });
+    if(error == true)
+      alert('Please choose a profile to remove!')
+  });
 });
 
 function get_json_string(bom_index, profile_id, action) {
