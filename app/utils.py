@@ -46,3 +46,39 @@ def convert_level_to_number(level):
         return int(level)
     except (TypeError, ValueError):
         return None
+
+
+def write_to_worksheet(ws, row, column, item, column_change):
+    ws[column['level'] + str(row)] = item.level
+    ws[column['number'] + str(row)] = item.number
+    ws[column['description'] + str(row)] = item.description
+    ws[column['rev'] + str(row)] = item.rev
+    ws[column['qty'] + str(row)] = item.quantity
+    ws[column['ref_des'] + str(row)] = ','.join(item.ref_des)
+
+    x = 'X'
+    ws[column_change + str(row)] = x
+    return ws
+
+
+def write_to_worksheet_ref(ws, row, column, item, column_change, column_ref_change):
+    ws[column['level'] + str(row)] = item.level
+    ws[column['number'] + str(row)] = item.number
+    ws[column['description'] + str(row)] = item.description
+    ws[column['rev'] + str(row)] = item.rev
+    ws[column['qty'] + str(row)] = item.quantity
+    ws[column['ref_des'] + str(row)] = ','.join(item.ref_des)
+
+    x = 'X'
+    for status in item.change_status:
+        if status == 'c_description':
+            ws[column_change['description'] + str(row)] = x
+        elif status == 'c_rev':
+            ws[column_change['rev'] + str(row)] = x
+        elif status == 'c_qty':
+            ws[column_change['qty'] + str(row)] = x
+        elif status == 'c_ref_des':
+            ws[column_change['ref_des'] + str(row)] = x
+            if column_ref_change is not None:
+                ws[column_ref_change + str(row)] = ','.join(item.ref_des_change) if len(item.ref_des_change) > 1 else item.ref_des_change[0]
+    return ws

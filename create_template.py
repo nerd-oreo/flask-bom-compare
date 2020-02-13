@@ -1,6 +1,10 @@
-from config import BASE_DIR
+a = {
+    'a': {
+        'b': 1,
+    }
+}
 
-def create_template():
-    template_folder = BASE_DIR + '/app/static/xlsx/'
+def test(t):
+    print(t['b'])
     
-create_template()
+print(a['a']['b'])

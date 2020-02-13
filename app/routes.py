@@ -242,8 +242,8 @@ def profile_test():
 
 @app.route('/compare')
 def compare():
-    compare = Compare(BOM['A'], BOM['B'])
-    compare.compare()
+    cp = Compare(BOM['A'], BOM['B'])
+    cp.compare()
     for key in BOM['A'].uid_bom:
         print('Key: {}\n{}'.format(key, BOM['A'].bom[key]))
 
