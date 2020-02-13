@@ -15,8 +15,8 @@ class Bom:
         self.sheet_name = ""
         self.header = Header()
         self.profile_list = list()
-        self.bom = dict()  # {unique_id:item}
-        self.uid_bom = list()  # unique id list for bom A
+        self.bom = dict()       # {unique_id:item}
+        self.uid_bom = list()   # unique id list for bom A
         self.has_avl = True
 
     def set_header_list(self, level, number, description, rev, qty, ref_des, ref_des_delimiter, mfg_name, mfg_number):
@@ -110,7 +110,7 @@ class Bom:
                 item = self.bom[key]
                 for i in range(0, len(self.profile_list)):
                     profile = self.profile_list[i]
-                    if item.type == profile.type:
+                    if item.type == profile.item_type:
                         item.number = profile.apply(item.number)
                 self.bom.update({key: item})
             self.update()

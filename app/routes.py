@@ -6,6 +6,7 @@ from app.forms import SelectSheetForm, MappingHeaderForm, NewProfileForm
 from app.bom import Bom
 from app.profile import Profile as pProfile
 from app.models import Profile as mProfile
+from app.compare import Compare
 import json
 import os
 
@@ -207,14 +208,12 @@ def profile_apply():
 
 @app.route('/profile/processing')
 def profile_processing():
-    BOM['A'].apply_profile()
-    BOM['B'].apply_profile()
-    for key in BOM['A'].uid_bom:
-        print('Key: {}\n{}'.format(key, BOM['A'].bom[key]))
-
-    for key in BOM['B'].uid_bom:
-        print('Key: {}\n{}'.format(key, BOM['B'].bom[key]))
-    return redirect(url_for('compare'))
+    try:
+        BOM['A'].apply_profile()
+        BOM['B'].apply_profile()
+        return redirect(url_for('compare'))
+    except KeyError:
+        return redirect(url_for('upload'))
 
 
 @app.route('/profile/test', methods=['GET', 'POST'])
@@ -243,5 +242,12 @@ def profile_test():
 
 @app.route('/compare')
 def compare():
+    compare = Compare(BOM['A'], BOM['B'])
+    compare.compare()
+    for key in BOM['A'].uid_bom:
+        print('Key: {}\n{}'.format(key, BOM['A'].bom[key]))
+
+    for key in BOM['B'].uid_bom:
+        print('Key: {}\n{}'.format(key, BOM['B'].bom[key]))
     return "Compare"
 

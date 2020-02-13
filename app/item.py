@@ -13,6 +13,7 @@ class Item:
         self.avl = list()  # avl list as list of dict
         self.parent = None
         self.change_status = list()
+        self.ref_des_change = list()
 
     def __repr__(self):
         s = 'Unique Id: {}\n' \
@@ -24,8 +25,10 @@ class Item:
             'Rev: {}\n' \
             'Qty: {}\n' \
             'Ref_Des: {}\n' \
-            'AVL: {}\n'.format(self.unique_id, self.type, self.parent.number, self.level, self.number, self.description, self.rev,
-                               self.quantity, self.ref_des, self.avl)
+            'AVL: {}\n' \
+            'Change: {} \n' \
+            'RefDes Chage: {}\n'.format(self.unique_id, self.type, self.parent.number, self.level, self.number, self.description, self.rev,
+                               self.quantity, self.ref_des, self.avl, self.change_status, self.ref_des_change)
         return s
 
     def set_item(self, level, number, description, rev, quantity):
