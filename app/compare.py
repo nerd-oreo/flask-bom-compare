@@ -31,53 +31,99 @@ class Compare:
         self.__template_init()
         wb = load_workbook(self.result_path)
         ws = wb['GENERIC COMPARE']
-        i = 0
-        j = 0
+        i = j = 0
         row = 3
-        print("len A: {}".format(len(self.__bom_a.uid_bom)))
-        print("uid A : ", self.__bom_a.uid_bom)
-        print("len B: {}".format(len(self.__bom_b.uid_bom)))
-        print("uid A : ", self.__bom_b.uid_bom)
+        a_queue = b_queue = list()
+        
+        print('Bom A: {}'.format(self.__bom_a.uid_bom))
+
         while True:
             if i < len(self.__bom_a.uid_bom):
                 bom_a_uid = self.__bom_a.uid_bom[i]
             if j < len(self.__bom_b.uid_bom):
                 bom_b_uid = self.__bom_b.uid_bom[j]
-
-            if bom_a_uid == bom_b_uid and bom_a_uid in self.__uid_in_both and bom_b_uid in self.__uid_in_both:
+            
+            print('Compare {}  :  {}'.format(bom_a_uid, bom_b_uid))
+            if bom_a_uid == bom_b_uid:
+                if len(a_queue) > 0 or len(b_queue) > 0:
+                    print('Has uid in queue')
+                    temp_bom_a_uid = bom_a_uid
+                    temp_bom_b_uid = bom_b_uid
+                    if len(a_queue) > 0:
+                        print('Pop a_queue')
+                        for k in range(0, len(a_queue)):
+                            bom_a_uid = a_queue.pop(0)
+                            item_a = self.__bom_a.bom[bom_a_uid]
+                            ws = write_to_worksheet(ws, row, column['A'], item_a, column['CHANGE']['NIB'])
+                            
+                            print(a_queue)
+                            
+                            row += 1
+                    if len(b_queue) > 0:
+                        print('Pop p_queue')
+                        for l in range(0, len(b_queue)):
+                            bom_b_uid = b_queue.pop(0)
+                            item_b = self.__bom_b.bom[bom_b_uid]
+                            ws = write_to_worksheet(ws, row, column['B'], item_b, column['CHANGE']['NIA'])
+                            
+                            print(b_queue)
+                            
+                            row += 1
+                    bom_a_uid = temp_bom_a_uid
+                    bom_b_uid = temp_bom_b_uid
+                    
                 item_a = self.__bom_a.bom[bom_a_uid]
                 ws = write_to_worksheet_ref(ws, row, column['A'], item_a, column['CHANGE'], column['REF_DES_CHANGE']['A'])
+                
                 item_b = self.__bom_b.bom[bom_b_uid]
                 ws = write_to_worksheet_ref(ws, row, column['B'], item_b, column['CHANGE'], column['REF_DES_CHANGE']['B'])
+                i += 1; j += 1
+                row += 1
+                print('Matched\n')
+                    
+            elif bom_a_uid != bom_b_uid:
+                print('Not matched')
+                if bom_a_uid in self.__uid_in_a and bom_b_uid in self.__uid_in_b:
+                    print('Add both uid to queue')
+                    
+                    a_queue.append(bom_a_uid)
+                    b_queue.append(bom_b_uid)
+                    i += 1; j += 1
+                    
+                    print('a_queue : {}'.format(a_queue))
+                    print('\n')
+                    print('b_queue : {}'.format(b_queue))
+                elif bom_a_uid in self.__uid_in_both and bom_b_uid in self.__uid_in_b:
+                    b_queue.append(bom_b_uid)
+                    j += 1                    
+                    print('Add {} to queue'.format(bom_b_uid))
+                    print('b_queue : {}'.format(b_queue))
+                elif bom_b_uid in self.__uid_in_both and bom_a_uid in self.__uid_in_a:
+                    a_queue.append(bom_a_uid)
+                    i += 1
+                    print('Add {} to queue'.format(bom_a_uid))
+                    print('b_queue : {}'.format(a_queue))
 
-            '''
-            if i < len(self.__bom_a.uid_bom):
-                bom_a_uid = self.__bom_a.uid_bom[i]
-                if bom_a_uid in self.__uid_in_both:
-                    item_a = self.__bom_a.bom[bom_a_uid]
-                    ws = write_to_worksheet_ref(ws, row, column['A'], item_a, column['CHANGE'], column['REF_DES_CHANGE']['A'])
-                elif bom_a_uid in self.__uid_in_a:
-                    item_a = self.__bom_a.bom[bom_a_uid]
-                    ws = write_to_worksheet(ws, row, column['A'], item_a, column['CHANGE']['NIB'])
-
-            if j < len(self.__bom_b.uid_bom):
-                bom_b_uid = self.__bom_b.uid_bom[j]
-                if bom_b_uid in self.__uid_in_both:
-                    item_b = self.__bom_b.bom[bom_b_uid]
-                    ws = write_to_worksheet_ref(ws, row, column['B'], item_b, column['CHANGE'], column['REF_DES_CHANGE']['B'])
-                elif bom_b_uid in self.__uid_in_b:
-                    row = row + 1
+            if i > len(self.__bom_a.uid_bom) and j < len(self.__bom_b.uid_bom):
+                for k in range(j, len(self.__bom_b.uid_bom)):
+                    bom_b_uid = self.__bom_b.uid_bom[k]
                     item_b = self.__bom_b.bom[bom_b_uid]
                     ws = write_to_worksheet(ws, row, column['B'], item_b, column['CHANGE']['NIA'])
-            '''
-            if i > len(self.__bom_a.uid_bom) and j > len(self.__bom_b.uid_bom):
+                    row += 1; j += 1
+            
+            if i < len(self.__bom_a.uid_bom) and j > len(self.__bom_b.uid_bom):
+                for k in range(i, len(self.__bom_a.uid_bom)):
+                    bom_a_uid = self.__bom_a.uid_bom[k]
+                    item_a = self.__bom_a.bom[bom_a_uid]
+                    ws = write_to_worksheet(ws, row, column['A'], item_a, column['CHANGE']['NIB'])
+                    row += 1; i += 1
+            
+            if i >= len(self.__bom_a.uid_bom) and j >= len(self.__bom_b.uid_bom):
                 break
-            row = row + 1
-            i = i + 1
-            j = j + 1
         wb.save(self.result_path)
 
     def __template_init(self):
+        print('Running __template_init()')
         src_folder = BASE_DIR + '\\app\\static\\xlsx\\'
         src_file = os.path.join(src_folder, 'result.xlsx')
 
@@ -90,6 +136,7 @@ class Compare:
         self.result_path = dst_file
 
     def __compare_uid_bom(self):
+        print('Running __compare_uid_bom()')
         # compare uid in bom A against uid bom B
         uid_a = self.__bom_a.uid_bom
         uid_b = self.__bom_b.uid_bom
@@ -104,6 +151,7 @@ class Compare:
                 self.__uid_in_b.append(uid_b[j])
                 
     def __compare_item(self):
+        print('Running __compare_item()')
         # compare item which exists in both list
         for i in range(0, len(self.__uid_in_both)):
             id = self.__uid_in_both[i]
