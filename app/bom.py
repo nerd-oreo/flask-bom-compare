@@ -42,7 +42,7 @@ class Bom:
         ws = wb[self.sheet_name]
 
         min_row = 2
-        max_row = ws.max_row
+        max_row = ws.max_row+1
         for row in range(min_row, max_row):
             level = ws[self.header.level + str(row)].value
 

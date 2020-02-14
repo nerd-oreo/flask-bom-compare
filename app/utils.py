@@ -11,10 +11,11 @@ def map_header_to_letter(filename, sheet_name):
     wb = load_workbook(filename=filename, read_only=False)
 
     ws = wb[sheet_name]
-    for i in range(1, ws.max_column):
+    print(ws.max_column)
+    for i in range(1, ws.max_column+1):
         c = ws.cell(row=1, column=i)
         col_n = get_column_letter(i)
-        header_list.append((col_n,c.value))
+        header_list.append((col_n, c.value))
     return header_list
 
 
@@ -80,5 +81,15 @@ def write_to_worksheet_ref(ws, row, column, item, column_change, column_ref_chan
         elif status == 'c_ref_des':
             ws[column_change['ref_des'] + str(row)] = x
             if column_ref_change is not None:
-                ws[column_ref_change + str(row)] = ','.join(item.ref_des_change) if len(item.ref_des_change) > 1 else item.ref_des_change[0]
+                if len(item.ref_des_change) == 1:
+                    ws[column_ref_change + str(row)] = item.ref_des_change[0]
+                elif len(item.ref_des_change):
+                    ws[column_ref_change + str(row)] = ','.join(item.ref_des_change)
     return ws
+
+
+def get_max(a, b):
+    max = a
+    if a < b:
+        max = b
+    return max
