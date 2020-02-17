@@ -4,6 +4,14 @@
   <form method="POST" action="">
     {{ form.hidden_tag() }}
     <div class="row">
+      <p><label>{{ form.template_name.label }}</label>
+        {{ form.template_name(class="u-full-width") }}
+      </p>
+      <p><label>{{ form.customer.label }}</label>
+        {{ form.customer(class="u-full-width") }}
+      </p>
+    </div>
+    <div class="row">
       <div class="six columns form-group form-group-a">
         <label>BOM A</label>
         <p>
@@ -86,19 +94,6 @@
     </div>
     <div class="row form-group next-step">
       <p>{{ form.next_step(class="button-primary") }}</p>
-    </div>
-  </form>
-  <form method="POST" action="">
-    {{ form_template.hidden_tag() }}
-    <div class="container profile-list-top ">
-    {% for subfield in form_template.template_radio %}
-      <div class="scroll-container">
-          <span>{{ subfield }} {{ subfield.label }}</span>
-      </div>
-    {% endfor %}
-    </div>
-    <div class="row form-group next-step">
-      <p>{{ form_template.next_step(class="button-primary") }}</p>
     </div>
   </form>
 </div>

@@ -12,14 +12,16 @@
 <body>
 <div class="container top">
 	<div class="wrapper">
-		<header><h4>BOM Compare</h4></header>
+		<header><h2>BOM Compare</h2></header>
 		<nav>
 			<a class="button" href="{{ url_for('upload') }}">NEW COMPARE</a>
+			<a class="button" href="{{ url_for('template_manage') }}">MANAGE TEMPLATE</a>
 			<a class="button" href="{{ url_for('profile_manage') }}">MANAGE PROFILE</a>
 		</nav>
 	</div>
 </div>
 <div class="container middle">
+	<div class="flash-message"></div>
 {% block content %}{%endblock%}
 </div>
 </body>

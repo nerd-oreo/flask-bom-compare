@@ -1,7 +1,7 @@
 from openpyxl import load_workbook
 from config import BASE_DIR
 from datetime import datetime
-from app.utils import write_to_worksheet, write_to_worksheet_ref
+from app.utils import write_to_worksheet, write_to_worksheet_ref, get_value, get_max, write_to_worksheet_avl
 import shutil
 import os
 
@@ -10,128 +10,105 @@ class Compare:
     def __init__(self, bom_a, bom_b):
         self.__bom_a = bom_a
         self.__bom_b = bom_b
-        self.__uid_in_a = list()
-        self.__uid_in_b = list()
-        self.__uid_in_both = list()
+        self.__master_list = list()
+        self.result_filename = ''
         self.result_file = ''
-        self.result_path = ''
-        
+
+        if self.__bom_a.has_avl and self.__bom_b.has_avl:
+            self.compare_avl = True
+        else:
+            self.compare_avl = False
+
     def compare(self):
-        self.__compare_uid_bom()
-        self.__compare_item()
-        self.__generate_result()
-        
-    def __generate_result(self):
         column = {
             'A': {'level': 'A', 'number': 'B', 'description': 'C', 'rev': 'D', 'qty': 'E', 'ref_des': 'F'},
             'B': {'level': 'G', 'number': 'H', 'description': 'I', 'rev': 'J', 'qty': 'K', 'ref_des': 'L'},
             'CHANGE': {'NIA': 'M', 'NIB': 'N', 'description': 'O', 'rev': 'P', 'qty': 'Q', 'ref_des': 'R'},
-            'REF_DES_CHANGE': {'A': 'R', 'B': 'S'},
+            'REF_DES_CHANGE': {'A': 'S', 'B': 'T'},
         }
+        row = 3     # start row
         self.__template_init()
-        wb = load_workbook(self.result_path)
+
+        # Prepare working for writing report
+        wb = load_workbook(self.result_file)
         ws = wb['GENERIC COMPARE']
-        i = j = 0
-        row = 3
-        a_queue = list()
-        b_queue = list()
 
-        while True:
-            if i < len(self.__bom_a.uid_bom):
-                bom_a_uid = self.__bom_a.uid_bom[i]
-            if j < len(self.__bom_b.uid_bom):
-                bom_b_uid = self.__bom_b.uid_bom[j]
+        if self.compare_avl:
+            avl_ws = wb['AVL COMPARE']
+            avl_row = 3
+            avl_column = {
+                'A': {'number': 'A', 'mfg_name': 'B', 'mfg_number': 'C'},
+                'B': {'number': 'D', 'mfg_name': 'E', 'mfg_number': 'F'},
+            }
 
-            print(f'index i {i} - index j {j}')
-            print(f'len uid A: {len(self.__bom_a.uid_bom)} - len uid B: {len(self.__bom_b.uid_bom)}')
-            print(f'Compare {bom_a_uid} : {bom_b_uid}')
+        # create UID master list
+        for i in range(get_max(self.__bom_a.uid, self.__bom_b.uid)):
+            uid_a = get_value(i, self.__bom_a.uid)
+            uid_b = get_value(i, self.__bom_b.uid)
+            if uid_a == uid_b:
+                self.__master_list.append(uid_a)
+            else:
+                if uid_a not in self.__master_list and uid_a is not None:
+                    self.__master_list.append(uid_a)
+                elif uid_b not in self.__master_list and uid_b is not None:
+                    self.__master_list.append(uid_b)
 
-            if bom_a_uid == bom_b_uid:
-                print('Matched!')
-                if len(a_queue) > 0 or len(b_queue) > 0:
-                    print('Has uid in queue')
-                    temp_bom_a_uid = bom_a_uid
-                    temp_bom_b_uid = bom_b_uid
-                    if len(a_queue) > 0:
-                        print(f'a_queue has uid {a_queue}')
-                        for k in range(0, len(a_queue)):
-                            bom_a_uid = a_queue.pop(0)
-                            item_a = self.__bom_a.bom[bom_a_uid]
-                            ws = write_to_worksheet(ws, row, column['A'], item_a, column['CHANGE']['NIB'])
-                            row += 1
-                    if len(b_queue) > 0:
-                        print(f'b_queue has uid {b_queue}')
-                        for l in range(0, len(b_queue)):
-                            bom_b_uid = b_queue.pop(0)
-                            item_b = self.__bom_b.bom[bom_b_uid]
-                            ws = write_to_worksheet(ws, row, column['B'], item_b, column['CHANGE']['NIA'])
+        # start comparing
+        for i in range(len(self.__master_list)):
+            uid = self.__master_list[i]
+            # if uid exist in both bom A and bom B
+            if uid in self.__bom_a.uid and uid in self.__bom_b.uid:
+                # comparing item detail
+                self.__compare_item(uid)
+                item_a = self.__bom_a.bom[uid]
+                item_b = self.__bom_b.bom[uid]
+                ws = write_to_worksheet_ref(ws, row, column['A'], item_a, column['CHANGE'],
+                                            column['REF_DES_CHANGE']['A'])
+                ws = write_to_worksheet_ref(ws, row, column['B'], item_b, column['CHANGE'],
+                                            column['REF_DES_CHANGE']['B'])
 
-                            row += 1
-                    bom_a_uid = temp_bom_a_uid
-                    bom_b_uid = temp_bom_b_uid
-                    
-                item_a = self.__bom_a.bom[bom_a_uid]
-                ws = write_to_worksheet_ref(ws, row, column['A'], item_a, column['CHANGE'], column['REF_DES_CHANGE']['A'])
-                
-                item_b = self.__bom_b.bom[bom_b_uid]
-                ws = write_to_worksheet_ref(ws, row, column['B'], item_b, column['CHANGE'], column['REF_DES_CHANGE']['B'])
-                i += 1
-                j += 1
-                print(f'increase i to {i}')
-                print(f'increase j to {j}')
-                row += 1
-
-            elif bom_a_uid != bom_b_uid:
-                print('Not matched!')
-                if bom_a_uid in self.__uid_in_a and bom_b_uid in self.__uid_in_b:
-                    print('add uid to both queue')
-                    a_queue.append(bom_a_uid)
-                    b_queue.append(bom_b_uid)
-                    print(f'a_queue {a_queue}')
-                    print(f'b_queue {b_queue}')
-                    i += 1
-                    j += 1
-                    print(f'increase i to {i}')
-                    print(f'increase j to {j}')
-                elif bom_a_uid in self.__uid_in_both and bom_b_uid in self.__uid_in_b:
-                    print('add uid to b_queue')
-                    b_queue.append(bom_b_uid)
-                    print(f'b_queue {b_queue}')
-                    j += 1
-                    print(f'increase j to {j}')
-                elif bom_b_uid in self.__uid_in_both and bom_a_uid in self.__uid_in_a:
-                    print('add uid to a_queue')
-                    a_queue.append(bom_a_uid)
-                    print(f'a_queue {a_queue}')
-                    i += 1
-                    print(f'increase i to {i}')
-
-            print('\n--------------------------------------------------\n')
-            print(f'index i {i} : length a {len(self.__bom_a.uid_bom)} - index j {j} : length b {len(self.__bom_b.uid_bom)}')
-            if i >= len(self.__bom_a.uid_bom) and j < len(self.__bom_b.uid_bom):
-                print('clean up the rest of B uid')
-                for k in range(j, len(self.__bom_b.uid_bom)):
-                    print(f'index j {j} : length b {len(self.__bom_b.uid_bom)}')
-                    bom_b_uid = self.__bom_b.uid_bom[k]
-                    item_b = self.__bom_b.bom[bom_b_uid]
-                    ws = write_to_worksheet(ws, row, column['B'], item_b, column['CHANGE']['NIA'])
-                    row += 1; j += 1
-            
-            if i < len(self.__bom_a.uid_bom) and j >= len(self.__bom_b.uid_bom):
-                print('clean up the rest of A uid')
-                for k in range(i, len(self.__bom_a.uid_bom)):
-                    print(f'index i {i} : length a {len(self.__bom_a.uid_bom)}')
-                    bom_a_uid = self.__bom_a.uid_bom[k]
-                    item_a = self.__bom_a.bom[bom_a_uid]
+                # Compare AVL
+                if self.compare_avl:
+                    if len(item_a.avl_uid) is not 0 or len(item_b.avl_uid) is not 0:
+                        avl_master_list = list()
+                        # create AVL UID master list
+                        for j in range(get_max(item_a.avl_uid, item_b.avl_uid)):
+                            avl_uid_a = get_value(j, item_a.avl_uid)
+                            avl_uid_b = get_value(j, item_b.avl_uid)
+                            if avl_uid_a == avl_uid_b:
+                                avl_master_list.append(avl_uid_a)   # only append one uid if both are matched
+                            else:
+                                if avl_uid_a not in avl_master_list and avl_uid_a is not None:
+                                    avl_master_list.append(avl_uid_a)
+                                elif avl_uid_b not in avl_master_list and avl_uid_b is not None:
+                                    avl_master_list.append(avl_uid_b)
+                        # start compare AVL
+                        for j in range(len(avl_master_list)):
+                            avl_uid = avl_master_list[j]
+                            if avl_uid in item_a.avl_uid and avl_uid in item_b.avl_uid:
+                                for mfg_name, mfg_number in item_a.avl[avl_uid].items():
+                                    avl_ws = write_to_worksheet_avl(avl_ws, avl_row, avl_column['A'], item_a.number, mfg_name, mfg_number)
+                                for mfg_name, mfg_number in item_b.avl[avl_uid].items():
+                                    avl_ws = write_to_worksheet_avl(avl_ws, avl_row,  avl_column['B'], item_b.number, mfg_name, mfg_number)
+                            else:
+                                if avl_uid in item_a.avl_uid:
+                                    for mfg_name, mfg_number in item_a.avl[avl_uid].items():
+                                        avl_ws = write_to_worksheet_avl(avl_ws, avl_row,  avl_column['A'], item_a.number,
+                                                                        mfg_name, mfg_number)
+                                elif avl_uid in item_b.avl_uid:
+                                    for mfg_name, mfg_number in item_b.avl[avl_uid].items():
+                                        avl_ws = write_to_worksheet_avl(avl_ws, avl_row,  avl_column['B'], item_b.number,
+                                                                        mfg_name, mfg_number)
+                            avl_row += 1
+            else:
+                if uid in self.__bom_a.uid:
+                    item_a = self.__bom_a.bom[uid]
                     ws = write_to_worksheet(ws, row, column['A'], item_a, column['CHANGE']['NIB'])
-                    row += 1; i += 1
-
-            print('check for break')
-            print(f'index i {i} : length a {len(self.__bom_a.uid_bom)} - index j {j} : length b {len(self.__bom_b.uid_bom)}')
-            if i >= len(self.__bom_a.uid_bom) and j >= len(self.__bom_b.uid_bom):
-                print('BREAK')
-                break
-        wb.save(self.result_path)
+                elif uid in self.__bom_b.uid:
+                    item_b = self.__bom_b.bom[uid]
+                    ws = write_to_worksheet(ws, row, column['B'], item_b, column['CHANGE']['NIA'])
+            row += 1
+        wb.save(self.result_file)
 
     def __template_init(self):
         print('Running __template_init()')
@@ -143,58 +120,39 @@ class Compare:
         dst_file = os.path.join(dst_folder, dst_filename)
         shutil.copy2(src_file, dst_file)
         print('Generate report at {}'.format(dst_file))
-        self.result_file = dst_filename
-        self.result_path = dst_file
+        self.result_filename = dst_filename
+        self.result_file = dst_file
 
-    def __compare_uid_bom(self):
-        print('Running __compare_uid_bom()')
-        # compare uid in bom A against uid bom B
-        uid_a = self.__bom_a.uid_bom
-        uid_b = self.__bom_b.uid_bom
-        for i in range(len(uid_a)):
-            if uid_a[i] in uid_b:
-                self.__uid_in_both.append(uid_a[i])
-            else:
-                self.__uid_in_a.append(uid_a[i])
-        
-        for j in range(len(uid_b)):
-            if uid_b[j] not in self.__uid_in_both:
-                self.__uid_in_b.append(uid_b[j])
-                
-    def __compare_item(self):
-        print('Running __compare_item()')
-        # compare item which exists in both list
-        for i in range(0, len(self.__uid_in_both)):
-            id = self.__uid_in_both[i]
-            item_a = self.__bom_a.bom[id]
-            item_b = self.__bom_b.bom[id]
-            
-            # compare description
-            if item_a.description != item_a.description:
-                item_a.change_status.append('c_description')
-                item_b.change_status.append('c_description')
-            
-            # compare rev 
-            if item_a.rev != item_b.rev:
-                item_a.change_status.append('c_rev')
-                item_b.change_status.append('c_rev')
-            
-            # compare qty
-            if item_a.quantity != item_b.quantity:
-                item_a.change_status.append('c_qty')
-                item_b.change_status.append('c_qty')
-            
-            # compare ref_des
-            for j in range(0, len(item_a.ref_des)):
-                a_ref_des = item_a.ref_des[j]
-                if a_ref_des not in item_b.ref_des:
-                    item_a.ref_des_change.append(a_ref_des)
-                    if 'c_ref_des' not in item_a.change_status:
-                        item_a.change_status.append('c_ref_des')
-                        
-            for k in range(0, len(item_b.ref_des)):
-                b_ref_des = item_b.ref_des[k]
-                if b_ref_des not in item_a.ref_des:
-                    item_b.ref_des_change.append(b_ref_des)
-                    if 'c_ref_des' not in item_b.change_status:
-                        item_b.change_status.append('c_ref_des')
+    def __compare_item(self, uid):
+        item_a = self.__bom_a.bom[uid]
+        item_b = self.__bom_b.bom[uid]
+
+        # compare description
+        if item_a.description != item_a.description:
+            item_a.change_status.append('c_description')
+            item_b.change_status.append('c_description')
+
+        # compare rev
+        if item_a.rev != item_b.rev:
+            item_a.change_status.append('c_rev')
+            item_b.change_status.append('c_rev')
+
+        # compare qty
+        if item_a.quantity != item_b.quantity:
+            item_a.change_status.append('c_qty')
+            item_b.change_status.append('c_qty')
+
+        # compare ref_des
+        for j in range(0, len(item_a.ref_des)):
+            a_ref_des = item_a.ref_des[j]
+            if a_ref_des not in item_b.ref_des:
+                item_a.ref_des_change.append(a_ref_des)
+                if 'c_ref_des' not in item_a.change_status:
+                    item_a.change_status.append('c_ref_des')
+
+        for k in range(0, len(item_b.ref_des)):
+            b_ref_des = item_b.ref_des[k]
+            if b_ref_des not in item_a.ref_des:
+                item_b.ref_des_change.append(b_ref_des)
+                if 'c_ref_des' not in item_b.change_status:
+                    item_b.change_status.append('c_ref_des')

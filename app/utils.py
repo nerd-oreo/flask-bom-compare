@@ -1,5 +1,6 @@
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
+import os
 
 ALLOWED_EXTENSIONS = {'xlsx'}
 
@@ -33,7 +34,7 @@ def allowed_file(filename):
 
 
 def convert_qty_to_number(qty):
-    if qty == "None":
+    if qty == "None" or qty == '':
         return None
     else:
         try:
@@ -88,8 +89,37 @@ def write_to_worksheet_ref(ws, row, column, item, column_change, column_ref_chan
     return ws
 
 
+def write_to_worksheet_avl(ws, row, column, item_number, item_mfg_name, item_mfg_number):
+    ws[column['number'] + str(row)] = item_number
+    ws[column['mfg_name'] + str(row)] = item_mfg_name
+    ws[column['mfg_number'] + str(row)] = item_mfg_number
+    return ws
+
+
+def get_value(index, l):
+    try:
+        return l[index]
+    except IndexError:
+        None
+
+
 def get_max(a, b):
-    max = a
-    if a < b:
-        max = b
-    return max
+    m = len(a)
+    if len(b) > m:
+        m = len(b)
+    return m
+
+
+def load_clean_name():
+    from config import BASE_DIR
+
+    clean_name_path = os.path.join(BASE_DIR, 'CleanName.xlsx')
+    clean_name_dict = dict()
+    wb = load_workbook(filename=clean_name_path, read_only=False)
+    ws = wb['CleanName']
+    for i in range(2, ws.max_row+1):
+        name = ws.cell(row=i, column=1).value
+        clean_name = ws.cell(row=i, column=2).value
+        clean_name_dict[name] = clean_name
+    return clean_name_dict
+

@@ -1,5 +1,5 @@
 from openpyxl import load_workbook
-from app.utils import convert_level_to_number, convert_qty_to_number
+from app.utils import convert_level_to_number, convert_qty_to_number, load_clean_name
 from app.item import Item
 from app.header import Header
 
@@ -16,7 +16,7 @@ class Bom:
         self.header = Header()
         self.profile_list = list()
         self.bom = dict()       # {unique_id:item}
-        self.uid_bom = list()   # unique id list for bom A
+        self.uid = list()   # unique id list for bom A
         self.has_avl = True
 
     def set_header_list(self, level, number, description, rev, qty, ref_des, ref_des_delimiter, mfg_name, mfg_number):
@@ -34,6 +34,8 @@ class Bom:
             self.has_avl = False
 
     def load_excel(self):
+        clean_name = load_clean_name()
+        print(clean_name)
         parent_stack = list()
         current_parent = None
         last_item = None
@@ -49,7 +51,7 @@ class Bom:
             if level is not None:
                 # get data from excel sheet
                 level = convert_level_to_number(str(ws[self.header.level + str(row)].value))
-                number = str(ws[self.header.number + str(row)].value)
+                number = str(ws[self.header.number + str(row)].value).replace(' ', '')
 
                 description = str(ws[self.header.description + str(row)].value)
                 rev = str(ws[self.header.rev + str(row)].value).split(" ")[0]
@@ -69,8 +71,15 @@ class Bom:
 
                 if self.has_avl:
                     if ws[self.header.mfg_name + str(row)].value is not None and ws[self.header.mfg_number + str(row)].value is not None:
-                        mfg_name = str(ws[self.header.mfg_name + str(row)].value)
-                        mfg_number = str(ws[self.header.mfg_number + str(row)].value)
+                        mfg_name = str(ws[self.header.mfg_name + str(row)].value).upper()
+                        mfg_number = str(ws[self.header.mfg_number + str(row)].value).upper()
+
+                        # get clean name
+                        try:
+                            mfg_name = clean_name[mfg_name]
+                        except KeyError:
+                            pass
+
                         item.set_avl(mfg_name, mfg_number)
 
                 if item.level == 0:  # top level
@@ -91,22 +100,28 @@ class Bom:
 
                 item.set_parent(parent=current_parent)
                 self.bom[item.unique_id] = item
-                self.uid_bom.append(item.unique_id)
+                self.uid.append(item.unique_id)
                 last_item = item
 
             else:  # if level is None type, only collect data from column V and X
                 if self.has_avl:
-                    mfg_name = str(ws[self.header.mfg_name + str(row)].value)
-                    mfg_number = str(ws[self.header.mfg_number + str(row)].value)
+                    mfg_name = str(ws[self.header.mfg_name + str(row)].value).upper()
+                    mfg_number = str(ws[self.header.mfg_number + str(row)].value).upper()
 
-                    key = self.uid_bom[len(self.uid_bom) - 1]
+                    # get clean name
+                    try:
+                        mfg_name = clean_name[mfg_name]
+                    except KeyError:
+                        pass
+
+                    key = self.uid[len(self.uid) - 1]
                     item = self.bom[key]
                     item.set_avl(mfg_name, mfg_number)
                     self.bom.update({key: item})
 
     def apply_profile(self):
         if len(self.profile_list) > 0:
-            for key in self.uid_bom:
+            for key in self.uid:
                 item = self.bom[key]
                 for i in range(0, len(self.profile_list)):
                     profile = self.profile_list[i]
@@ -118,11 +133,11 @@ class Bom:
     def update(self):
         temp_bom = dict()
         temp_uid_bom = list()
-        for key in self.uid_bom:
+        for key in self.uid:
             item = self.bom[key]
             item.update_unique_id()
             temp_key = item.unique_id
             temp_bom[temp_key] = item
             temp_uid_bom.append(temp_key)
-        self.uid_bom = temp_uid_bom
+        self.uid = temp_uid_bom
         self.bom = temp_bom
