@@ -53,14 +53,14 @@ def select_sheet():
         if form.validate_on_submit():
             BOM['A'].sheet_name = form.select_sheet_a.data
             BOM['B'].sheet_name = form.select_sheet_b.data
-            return redirect(url_for('mapping'))
+            return redirect(url_for('mapping_manual'))
         return render_template('select_sheet.html', form=form)
     except KeyError:
         return redirect(url_for('upload'))
 
 
-@app.route('/mapping', methods=['GET', 'POST'])
-def mapping():
+@app.route('/mapping/manual', methods=['GET', 'POST'])
+def mapping_manual():
     try:
         form = MappingHeaderForm()
         choices_a = map_header_to_letter(BOM['A'].file_path, BOM['A'].sheet_name)
@@ -86,15 +86,6 @@ def mapping():
         form.select_col_mfg_name_b.choices = choices_b
         form.select_col_mfg_number_b.choices = choices_b
 
-        form_template = MappingHeaderUsingTemplateForm()
-        templates = MappingTemplate.query.all()
-        choices = list()
-        for template in templates:
-            id = template.id
-            template_name = template.template_name
-            choices.append((id, template_name))
-        form_template.template_radio.choices = choices
-
         if form.validate_on_submit():
             level = form.select_col_level_a.data
             number = form.select_col_number_a.data
@@ -105,7 +96,7 @@ def mapping():
             ref_des_delimiter = form.select_col_ref_des_delimiter_a.data
             mfg_name = form.select_col_mfg_name_a.data
             mfg_number = form.select_col_mfg_number_a.data
-            
+
             BOM['A'].set_header_list(level, number, description, rev, qty, ref_des, ref_des_delimiter, mfg_name, mfg_number)
 
             level = form.select_col_level_b.data
@@ -123,41 +114,55 @@ def mapping():
             BOM['B'].load_excel()
             return redirect(url_for('profile_apply'))
 
-        if form_template.validate_on_submit():
-            template_id = form_template.template_radio.data
-            template = MappingTemplate.query.filter_by(id=template_id).first()
-
-            level = template.level_a
-            number = template.number_a
-            description = template.description_a
-            rev = template.rev_a
-            qty = template.qty_a
-            ref_des = template.ref_des_a
-            ref_des_delimiter = template.ref_des_delimiter_a
-            mfg_name = template.mfg_name_a
-            mfg_number = template.mfg_number_a
-
-            BOM['A'].set_header_list(level, number, description, rev, qty, ref_des, ref_des_delimiter, mfg_name,
-                                     mfg_number)
-
-            level = template.level_b
-            number = template.number_b
-            description = template.description_b
-            rev = template.rev_b
-            qty = template.qty_b
-            ref_des = template.ref_des_b
-            ref_des_delimiter = template.ref_des_delimiter_b
-            mfg_name = template.mfg_name_b
-            mfg_number = template.mfg_number_b
-
-            BOM['B'].set_header_list(level, number, description, rev, qty, ref_des, ref_des_delimiter, mfg_name,
-                                     mfg_number)
-            BOM['A'].load_excel()
-            BOM['B'].load_excel()
-            return redirect(url_for('profile_apply'))
-        return render_template('mapping.html', form=form, form_template=form_template)
+        return render_template('mapping_manual.html', form=form)
     except KeyError:
         return redirect(url_for('upload'))
+
+
+@app.route('/mapping/template', methods=['GET', 'POST'])
+def mapping_template():
+    form = MappingHeaderUsingTemplateForm()
+    templates = MappingTemplate.query.all()
+    choices = list()
+    for template in templates:
+        id = template.id
+        template_name = template.template_name
+        choices.append((id, template_name))
+    form.template_radio.choices = choices
+
+    if form.validate_on_submit():
+        template_id = form.template_radio.data
+        template = MappingTemplate.query.filter_by(id=template_id).first()
+
+        level = template.level_a
+        number = template.number_a
+        description = template.description_a
+        rev = template.rev_a
+        qty = template.qty_a
+        ref_des = template.ref_des_a
+        ref_des_delimiter = template.ref_des_delimiter_a
+        mfg_name = template.mfg_name_a
+        mfg_number = template.mfg_number_a
+
+        BOM['A'].set_header_list(level, number, description, rev, qty, ref_des, ref_des_delimiter, mfg_name,
+                                 mfg_number)
+
+        level = template.level_b
+        number = template.number_b
+        description = template.description_b
+        rev = template.rev_b
+        qty = template.qty_b
+        ref_des = template.ref_des_b
+        ref_des_delimiter = template.ref_des_delimiter_b
+        mfg_name = template.mfg_name_b
+        mfg_number = template.mfg_number_b
+
+        BOM['B'].set_header_list(level, number, description, rev, qty, ref_des, ref_des_delimiter, mfg_name,
+                                 mfg_number)
+        BOM['A'].load_excel()
+        BOM['B'].load_excel()
+        return redirect(url_for('profile_apply'))
+    return render_template('mapping_template.html', form=form)
 
 
 @app.route('/template/manage')

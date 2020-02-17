@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField, RadioField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, InputRequired
 
 from app.models import Profile
 
@@ -35,8 +35,8 @@ class MappingHeaderForm(FlaskForm):
 
 
 class MappingHeaderUsingTemplateForm(FlaskForm):
-    template_radio = RadioField('Templates', validators=[DataRequired()])
-    next_step = SubmitField('NEXT STEP')
+    template_radio = RadioField('Templates', coerce=int, validators=[InputRequired()])
+    use_template = SubmitField('USE TEMPLATE')
 
 
 class NewMappingTemplateForm(FlaskForm):

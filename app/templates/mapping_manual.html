@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container mapping-section content">
+  <nav><span><a href="{{ url_for('mapping_manual') }}">Mapping Manual</a> | <a href="{{ url_for('mapping_template') }}">Mapping Template</a></span></nav>
   <form method="POST" action="">
     {{ form.hidden_tag() }}
     <div class="row">
@@ -86,19 +87,6 @@
     </div>
     <div class="row form-group next-step">
       <p>{{ form.next_step(class="button-primary") }}</p>
-    </div>
-  </form>
-  <form method="POST" action="">
-    {{ form_template.hidden_tag() }}
-    <div class="container profile-list-top ">
-    {% for subfield in form_template.template_radio %}
-      <div class="scroll-container">
-          <span>{{ subfield }} {{ subfield.label }}</span>
-      </div>
-    {% endfor %}
-    </div>
-    <div class="row form-group next-step">
-      <p>{{ form_template.next_step(class="button-primary") }}</p>
     </div>
   </form>
 </div>
