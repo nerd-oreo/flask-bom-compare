@@ -61,62 +61,59 @@ def select_sheet():
 
 @app.route('/mapping/manual', methods=['GET', 'POST'])
 def mapping_manual():
-    try:
-        form = MappingHeaderForm()
-        choices_a = map_header_to_letter(BOM['A'].file_path, BOM['A'].sheet_name)
-        choices_b = map_header_to_letter(BOM['B'].file_path, BOM['B'].sheet_name)
+    form = MappingHeaderForm()
+    choices_a = map_header_to_letter(BOM['A'].file_path, BOM['A'].sheet_name)
+    choices_b = map_header_to_letter(BOM['B'].file_path, BOM['B'].sheet_name)
 
-        form.select_col_level_a.choices = choices_a
-        form.select_col_number_a.choices = choices_a
-        form.select_col_desc_a.choices = choices_a
-        form.select_col_rev_a.choices = choices_a
-        form.select_col_qty_a.choices = choices_a
-        form.select_col_ref_des_a.choices = choices_a
-        form.select_col_ref_des_delimiter_a.choices = [('COMMA', 'COMMA'), ('SPACE', 'SPACE')]
-        form.select_col_mfg_name_a.choices = choices_a
-        form.select_col_mfg_number_a.choices = choices_a
-        
-        form.select_col_level_b.choices = choices_b
-        form.select_col_number_b.choices = choices_b
-        form.select_col_desc_b.choices = choices_b
-        form.select_col_rev_b.choices = choices_b
-        form.select_col_qty_b.choices = choices_b
-        form.select_col_ref_des_b.choices = choices_b
-        form.select_col_ref_des_delimiter_b.choices = [('COMMA', 'COMMA'), ('SPACE', 'SPACE')]
-        form.select_col_mfg_name_b.choices = choices_b
-        form.select_col_mfg_number_b.choices = choices_b
+    form.select_col_level_a.choices = choices_a
+    form.select_col_number_a.choices = choices_a
+    form.select_col_desc_a.choices = choices_a
+    form.select_col_rev_a.choices = choices_a
+    form.select_col_qty_a.choices = choices_a
+    form.select_col_ref_des_a.choices = choices_a
+    form.select_col_ref_des_delimiter_a.choices = [('COMMA', 'COMMA'), ('SPACE', 'SPACE')]
+    form.select_col_mfg_name_a.choices = choices_a
+    form.select_col_mfg_number_a.choices = choices_a
+    
+    form.select_col_level_b.choices = choices_b
+    form.select_col_number_b.choices = choices_b
+    form.select_col_desc_b.choices = choices_b
+    form.select_col_rev_b.choices = choices_b
+    form.select_col_qty_b.choices = choices_b
+    form.select_col_ref_des_b.choices = choices_b
+    form.select_col_ref_des_delimiter_b.choices = [('COMMA', 'COMMA'), ('SPACE', 'SPACE')]
+    form.select_col_mfg_name_b.choices = choices_b
+    form.select_col_mfg_number_b.choices = choices_b
 
-        if form.validate_on_submit():
-            level = form.select_col_level_a.data
-            number = form.select_col_number_a.data
-            description = form.select_col_desc_a.data
-            rev = form.select_col_rev_a.data
-            qty = form.select_col_qty_a.data
-            ref_des = form.select_col_ref_des_a.data
-            ref_des_delimiter = form.select_col_ref_des_delimiter_a.data
-            mfg_name = form.select_col_mfg_name_a.data
-            mfg_number = form.select_col_mfg_number_a.data
+    if form.validate_on_submit():
+        level = form.select_col_level_a.data
+        number = form.select_col_number_a.data
+        description = form.select_col_desc_a.data
+        rev = form.select_col_rev_a.data
+        qty = form.select_col_qty_a.data
+        ref_des = form.select_col_ref_des_a.data
+        ref_des_delimiter = form.select_col_ref_des_delimiter_a.data
+        mfg_name = form.select_col_mfg_name_a.data
+        mfg_number = form.select_col_mfg_number_a.data
 
-            BOM['A'].set_header_list(level, number, description, rev, qty, ref_des, ref_des_delimiter, mfg_name, mfg_number)
+        BOM['A'].set_header_list(level, number, description, rev, qty, ref_des, ref_des_delimiter, mfg_name, mfg_number)
 
-            level = form.select_col_level_b.data
-            number = form.select_col_number_b.data
-            description = form.select_col_desc_b.data
-            rev = form.select_col_rev_b.data
-            qty = form.select_col_qty_b.data
-            ref_des = form.select_col_ref_des_b.data
-            ref_des_delimiter = form.select_col_ref_des_delimiter_b.data
-            mfg_name = form.select_col_mfg_name_b.data
-            mfg_number = form.select_col_mfg_number_b.data
-            BOM['B'].set_header_list(level, number, description, rev, qty, ref_des, ref_des_delimiter, mfg_name, mfg_number)
+        level = form.select_col_level_b.data
+        number = form.select_col_number_b.data
+        description = form.select_col_desc_b.data
+        rev = form.select_col_rev_b.data
+        qty = form.select_col_qty_b.data
+        ref_des = form.select_col_ref_des_b.data
+        ref_des_delimiter = form.select_col_ref_des_delimiter_b.data
+        mfg_name = form.select_col_mfg_name_b.data
+        mfg_number = form.select_col_mfg_number_b.data
+        BOM['B'].set_header_list(level, number, description, rev, qty, ref_des, ref_des_delimiter, mfg_name, mfg_number)
 
-            BOM['A'].load_excel()
-            BOM['B'].load_excel()
-            return redirect(url_for('profile_apply'))
+        BOM['A'].load_excel()
+        BOM['B'].load_excel()
+        return redirect(url_for('profile_apply'))
 
-        return render_template('mapping_manual.html', form=form)
-    except KeyError:
-        return redirect(url_for('upload'))
+    return render_template('mapping_manual.html', form=form)
 
 
 @app.route('/mapping/template', methods=['GET', 'POST'])
@@ -377,6 +374,9 @@ def profile_apply():
             if profile_data['action'] == 'add':
                 profile_id = int(profile_data['profile_id'])
                 index = profile_data['bom_index']
+                
+                print('{} - {}'.format(profile_id, index))
+                
                 p = mProfile.query.filter_by(id=profile_id).first()
                 profile = pProfile()
                 profile.set_profile(p.profile_name, p.item_type, p.customer, p.prefix, p.prefix_action, p.suffix,
@@ -432,6 +432,7 @@ def profile_test():
 def compare():
     cp = Compare(BOM['A'], BOM['B'])
     cp.compare()
+    
     return render_template('download.html', result_file=cp.result_file)
 
 

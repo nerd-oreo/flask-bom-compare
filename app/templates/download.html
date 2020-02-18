@@ -1,8 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-  <div class="container content">
+  <div class="form">
+    <div class="row">
+      <div class="col">
+        <header><h4>Process Completed!</h4></header>
+      </div>
+    </div>
+
     {% if result_file %}
-      <a class="button button-primary" href="{{ url_for('compare_download', path=result_file) }}">DOWNLOAD RESULT</a>
+    <div class="row">
+      <div class="col-4"></div>
+      <div class="col-4"><a class="btn btn-primary" href="{{ url_for('compare_download', path=result_file) }}">DOWNLOAD RESULT</a></div>
+      <div class="col-4"></div>
+    </div>
     {% endif %}
   </div>
 {% endblock %}

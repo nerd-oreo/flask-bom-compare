@@ -1,24 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container upload-section content">
-  <form method="POST" enctype="multipart/form-data" onsubmit="validateFileOnSubmit();">
-    <div class="form-group">
-      <div class="row">
-        <div class="six columns flex-container">
-          <p><label for="upload_bom_a">Select BOM A:</label><input type="file" name="file_a" class="file-upload-field" id="upload_bom_a" accept=".xlsx" required></p>
-        </div>
-        <div class="six columns flex-container">
-          <p><label for="upload_bom_b">Select BOM B:</label><input type="file" name="file_b" class="file-upload-field" id="upload_bom_b" accept=".xlsx" required></p>
-        </div>
+<form method="POST" class="form bom-upload-form" enctype="multipart/form-data" onsubmit="validateFileOnSubmit();">
+  <div class="row">
+    <div class="col">
+      <header><h4>Upload BOM</h4></header>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col"><small><em>Please select the BOMs you want to compare in Excel format. Only extension <strong style="color: red;">*.xlsx</strong> is accepted.</em></small></div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="form-group">
+        <label for="upload_bom_a"><strong>Select BOM A:</strong></label><input type="file" name="file_a" class="form-control-file bom-upload-field" id="upload_bom_a" accept=".xlsx" required>
       </div>
-      <div class="row flex-container">
-        <p><input type="submit" class="button-primary" value="Next Step"></p>
+    </div>
+    <div class="col">
+      <div class="form-group">
+        <label for="upload_bom_b"><strong>Select BOM B:</strong></label><input type="file" name="file_b" class="form-control-file bom-upload-field" id="upload_bom_b" accept=".xlsx" required>
       </div>
-      <span class="instruction">
-        <small><strong>&#8226; Instruction:</strong><em> Please select the BOMs you want to compare in Excel format. Only extension <strong style="color: red;">*.xlsx</strong> is accepted.</em></small>
-      </span>
-    </div> <!-- end form-group -->
-  </form>
-</div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col"></div>
+    <div class="col"><p><input type="submit" class="btn btn-primary" value="NEXT STEP"></p></div>
+    <div class="col"></div>
+  </div>
+</form>
 <script src="{{ url_for('static', filename='js/compare.js') }}"></script>
 {% endblock %}

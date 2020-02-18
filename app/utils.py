@@ -12,7 +12,6 @@ def map_header_to_letter(filename, sheet_name):
     wb = load_workbook(filename=filename, read_only=False)
 
     ws = wb[sheet_name]
-    print(ws.max_column)
     for i in range(1, ws.max_column+1):
         c = ws.cell(row=1, column=i)
         col_n = get_column_letter(i)
@@ -118,8 +117,8 @@ def load_clean_name():
     wb = load_workbook(filename=clean_name_path, read_only=False)
     ws = wb['CleanName']
     for i in range(2, ws.max_row+1):
-        name = ws.cell(row=i, column=1).value
-        clean_name = ws.cell(row=i, column=2).value
+        name = str(ws.cell(row=i, column=1).value).upper()
+        clean_name = str(ws.cell(row=i, column=2).value).upper()
         clean_name_dict[name] = clean_name
     return clean_name_dict
 

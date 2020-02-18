@@ -1,19 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mapping-section content">
-  <nav><span><a href="{{ url_for('mapping_manual') }}">Mapping Manual</a> | <a href="{{ url_for('mapping_template') }}">Mapping Template</a></span></nav>
-  <form method="POST" action="">
-    {{ form.hidden_tag() }}
-    <div class="container profile-list-top ">
+<form method="POST" action="" class="form mapping-form">
+  {{ form.hidden_tag() }}
+  <div class="row mapping-control">
+    <div class="col">
+      <a class="btn btn-primary btn-sm" href="{{ url_for('mapping_manual') }}">Mapping Manual</a>
+      <a class="btn btn-primary btn-sm disabled" href="{{ url_for('mapping_template') }}" disabled>Mapping Template</a>
+    </div>
+    <div class="col"></div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <header><h4>Column Mapping</h4></header>
+    </div>
+  </div>
+  <div class="row scroll-container">
     {% for subfield in form.template_radio %}
-      <div class="scroll-container">
-          <span>{{ subfield }} {{ subfield.label }}</span>
-      </div>
+          <div class="col"></div>
+          <div class="col"><span>{{ subfield(class="form-check-input") }} {{ subfield.label(class="form-check-label") }}</span></div>
+          <div class="col"></div>
     {% endfor %}
-    </div>
-    <div class="row form-group next-step">
-      <p>{{ form.use_template(class="button-primary") }}</p>
-    </div>
-  </form>
-</div>
+  </div>
+  <div class="row">
+    <div class="col"></div>
+    <div class="col">{{ form.use_template(class="btn btn-primary") }}</div>
+    <div class="col"></div>
+  </div>
+</form>
 {% endblock content %}

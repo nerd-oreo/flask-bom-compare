@@ -3,12 +3,12 @@ $(document).ready(function () {
   $('#add-profile').click(function (event){
     var error = true;
     $('.profile-list-top .scroll-container').children().each(function() {
-      var checkbox = $(this).children().children();
+      var checkbox = $(this).children().children().children();
       if(checkbox.prop('checked')) {
         var profile_id = checkbox.val();
-        var parent = checkbox.parent().parent();
-        var profile_class = parent.attr('class');
-        var bottom_profile = $('.profile-list-bottom .scroll-container').find('.'+profile_class);
+        var parent = checkbox.parent().parent().parent();
+        var div_profile_id = parent.attr('id');
+        var bottom_profile = $('.profile-list-bottom .scroll-container').find('#'+div_profile_id);
         var bom_index = $('#bom-index').val();
         var json_string = get_json_string(bom_index, profile_id, 'add');
         send(json_string, '/profile/apply');
@@ -27,18 +27,18 @@ $(document).ready(function () {
   $('#remove-profile').click(function (event) {
     var error = true;
     $('.profile-list-bottom .scroll-container').children().each(function () {
-        var checkbox = $(this).children().children();
+        var checkbox = $(this).children().children().children();
         if(checkbox.prop('checked')) {
             var profile_id = checkbox.val();
-            var parent = checkbox.parent().parent();
-            var profile_class = parent.attr('class');
-            var bottom_profile = $('.profile-list-top .scroll-container').find('.'+profile_class);
+            var parent = checkbox.parent().parent().parent();
+            var div_profile_id = parent.attr('id');
+            var top_profile = $('.profile-list-top .scroll-container').find('#'+div_profile_id);
             var bom_index = $('#bom-index').val();
             var json_string = get_json_string(bom_index, profile_id, 'remove');
             send(json_string, '/profile/apply');
             checkbox.prop('checked', false);
             parent.css('display','none');
-            bottom_profile.css('display', 'block');
+            top_profile.css('display', 'block');
             error = false;
         }
     });
@@ -62,6 +62,6 @@ function send(data, url) {
     type: 'POST',
     url: url
   }).done(function(msg) {
-    console.log(msg);
+    // pass
   });
 }

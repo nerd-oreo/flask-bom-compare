@@ -1,93 +1,106 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mapping-section content">
-  <nav><span><a href="{{ url_for('mapping_manual') }}">Mapping Manual</a> | <a href="{{ url_for('mapping_template') }}">Mapping Template</a></span></nav>
-  <form method="POST" action="">
-    {{ form.hidden_tag() }}
-    <div class="row">
-      <div class="six columns form-group form-group-a">
-        <label>BOM A</label>
-        <p>
-          <label>{{ form.select_col_level_a.label }}</label>
-          {{ form.select_col_level_a(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_number_a.label }}</label>
-          {{ form.select_col_number_a(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_desc_a.label }}</label>
-          {{ form.select_col_desc_a(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_rev_a.label }}</label>
-          {{ form.select_col_rev_a(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_qty_a.label }}</label>
-          {{ form.select_col_qty_a(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_ref_des_a.label }}</label>
-          {{ form.select_col_ref_des_a(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_ref_des_delimiter_a.label }}</label>
-          {{ form.select_col_ref_des_delimiter_a(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_mfg_name_a.label }}</label>
-          {{ form.select_col_mfg_name_a(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_mfg_number_a.label }}</label>
-          {{ form.select_col_mfg_number_a(class="u-full-width") }}
-        </p>
-      </div>
 
-      <div class="six columns form-group form-group-b">
-        <label>BOM B</label>
-        <p>
-          <label>{{ form.select_col_level_b.label }}</label>
-          {{ form.select_col_level_b(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_number_b.label }}</label>
-          {{ form.select_col_number_b(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_desc_b.label }}</label>
-          {{ form.select_col_desc_b(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_rev_b.label }}</label>
-          {{ form.select_col_rev_b(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_qty_b.label }}</label>
-          {{ form.select_col_qty_b(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_ref_des_b.label }}</label>
-          {{ form.select_col_ref_des_b(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_ref_des_delimiter_b.label }}</label>
-          {{ form.select_col_ref_des_delimiter_b(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_mfg_name_b.label }}</label>
-          {{ form.select_col_mfg_name_b(class="u-full-width") }}
-        </p>
-        <p>
-          <label>{{ form.select_col_mfg_number_b.label }}</label>
-          {{ form.select_col_mfg_number_b(class="u-full-width") }}
-        </p>
+<form method="POST" action="" class="form mapping-form">
+  {{ form.hidden_tag() }}
+  <div class="row mapping-control">
+    <div class="col">
+      <a class="btn btn-primary btn-sm disabled" href="{{ url_for('mapping_manual') }}">Mapping Manual</a>
+      <a class="btn btn-primary btn-sm" href="{{ url_for('mapping_template') }}">Mapping Template</a>
+    </div>
+    <div class="col"></div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <header><h4>Column Mapping</h4></header>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <label><strong>BOM A</strong></label>
+      <div class="form-group">
+        {{ form.select_col_level_a.label }}
+        {{ form.select_col_level_a(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_number_a.label }}
+        {{ form.select_col_number_a(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_desc_a.label }}
+        {{ form.select_col_desc_a(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_rev_a.label }}
+        {{ form.select_col_rev_a(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_qty_a.label }}
+        {{ form.select_col_qty_a(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_ref_des_a.label }}
+        {{ form.select_col_ref_des_a(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_ref_des_delimiter_a.label }}
+        {{ form.select_col_ref_des_delimiter_a(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_mfg_name_a.label }}
+        {{ form.select_col_mfg_name_a(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_mfg_number_a.label }}
+        {{ form.select_col_mfg_number_a(class="form-control") }}
       </div>
     </div>
-    <div class="row form-group next-step">
-      <p>{{ form.next_step(class="button-primary") }}</p>
+
+    <div class="col">
+      <label><strong>BOM B</strong></label>
+      <div class="form-group">
+        {{ form.select_col_level_b.label }}
+        {{ form.select_col_level_b(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_number_b.label }}
+        {{ form.select_col_number_b(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_desc_b.label }}
+        {{ form.select_col_desc_b(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_rev_b.label }}
+        {{ form.select_col_rev_b(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_qty_b.label }}
+        {{ form.select_col_qty_b(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_ref_des_b.label }}
+        {{ form.select_col_ref_des_b(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_ref_des_delimiter_b.label }}
+        {{ form.select_col_ref_des_delimiter_b(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_mfg_name_b.label }}
+        {{ form.select_col_mfg_name_b(class="form-control") }}
+      </div>
+      <div class="form-group">
+        {{ form.select_col_mfg_number_b.label }}
+        {{ form.select_col_mfg_number_b(class="form-control") }}
+      </div>
     </div>
-  </form>
-</div>
+  </div>
+  <div class="row">
+    <div class="col"></div>
+    <div class="col">{{ form.next_step(class="btn btn-primary") }}</div>
+    <div class="col"></div>
+  </div>
+</form>
+
 {% endblock content %}

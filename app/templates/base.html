@@ -3,26 +3,36 @@
 <head>
 <meta charset="utf-8">
 <link rel="icon" href="{{ url_for('static', filename='images/compare.png') }}" type="image/x-icon" />
+<!--
 <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/compare.css') }}">
+-->
 <script src="{{ url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/compare.css') }}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 <title>DC Bom Compare</title>
 </head>
 <body>
-<div class="container top">
-	<div class="wrapper">
-		<header><h2>BOM Compare</h2></header>
-		<nav>
-			<a class="button" href="{{ url_for('upload') }}">NEW COMPARE</a>
-			<a class="button" href="{{ url_for('template_manage') }}">MANAGE TEMPLATE</a>
-			<a class="button" href="{{ url_for('profile_manage') }}">MANAGE PROFILE</a>
-		</nav>
-	</div>
-</div>
-<div class="container middle">
+<nav class="navbar navbar-light" style="background-color: #fcfcfc;box-shadow: 1px 1px 2px #b8b8b8;">
+  <span class="navbar-brand mb-0 h1"><header><h3 style="color: #404040">BOM Compare</h3></header></span>
+  <ul class="nav">
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('upload') }}">NEW COMPARE</a>
+    </li>
+    <li class="nav-item">
+			<a class="nav-link" href="{{ url_for('template_manage') }}">MANAGE TEMPLATE</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('profile_manage') }}">MANAGE PROFILE</a>
+    </li>
+  </ul>
+</nav>
+<div class="container-md">
 	<div class="flash-message"></div>
 {% block content %}{%endblock%}
 </div>
+<!--<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 </body>
 </html>

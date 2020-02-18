@@ -6,8 +6,8 @@ from app.models import Profile
 
 
 class SelectSheetForm(FlaskForm):
-    select_sheet_a = SelectField('Select worksheet contain BOM A', validators=[DataRequired()])
-    select_sheet_b = SelectField('Select worksheet contain BOM B', validators=[DataRequired()])
+    select_sheet_a = SelectField('Worksheet in BOM A', validators=[DataRequired()])
+    select_sheet_b = SelectField('Worksheet in BOM B', validators=[DataRequired()])
     next_step = SubmitField('NEXT STEP')
 
 
