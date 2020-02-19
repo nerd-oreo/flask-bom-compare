@@ -1,34 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
-
-<div class="row">
-  <div class="four columns">
-    <div class="container profile-add-section"><p><a class="button button-primary" href="{{ url_for('profile_add') }}">Add New Profile</a></p></div>
-</div>
-{% if profiles %}
-  <div class="eight columns">
-    <table class="u-full-width profiles-table">
-      <thead>
-        <tr>
-          <th>Profile Name</th>
-          <th>Item Type</th>
-          <th>Customer</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      
-      <tbody>
-      {% for profile in profiles %}
-      <tr>
-        <td>{{ profile.profile_name }}</td>
-        <td>{{ profile.item_type }}</td>
-        <td>{{ profile.customer }}</td>
-        <td><a class="button button-primary action" href="{{ url_for('profile_modify', id=profile.id) }}">Modify</a>&nbsp;|&nbsp;<a class="button button-primary action" href="{{ url_for('profile_delete', id=profile.id) }}">Delete</a></td>
-      </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+<div class="form profile-manage">
+  <div class="row">
+    <div class="col">
+      <header><h4>Manage Profile</h4></header>
+    </div>
   </div>
-</div>
-{% endif %}
+  
+  <div class="row">
+    <div class="col-3">
+      <div class="container profile-add-section"><p><a class="btn btn-primary" href="{{ url_for('profile_add') }}">NEW PROFILE</a></p></div>
+  </div>
+  
+    <div class="col-9">
+      {% if profiles %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Profile Name</th>
+            <th scope="col">Item Type</th>
+            <th scope="col">Customer</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        
+        <tbody>
+        {% for profile in profiles %}
+        <tr>
+          <td>{{ profile.profile_name }}</td>
+          <td>{{ profile.item_type }}</td>
+          <td>{{ profile.customer }}</td>
+          <td><a class="btn btn-success btn-sm" href="{{ url_for('profile_modify', id=profile.id) }}">Modify</a>&nbsp;|&nbsp;<a class="btn btn-danger btn-sm" href="{{ url_for('profile_delete', id=profile.id) }}">Delete</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+  </div>
+  
+</div> <!-- end .form -->
+
 {% endblock %}

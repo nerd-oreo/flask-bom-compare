@@ -1,32 +1,40 @@
 {% extends "base.html" %}
 {% block content %}
-
-<div class="row">
-  <div class="four columns">
-    <div class="container profile-add-section"><p><a class="button button-primary" href="{{ url_for('template_upload') }}">Add New Template</a></p></div>
+<div class="form profile-manage">
+  <div class="row">
+    <div class="col">
+      <header><h4>Manage Template</h4></header>
+    </div>
   </div>
-{% if templates %}
-  <div class="eight columns">
-    <table class="u-full-width profiles-table">
-      <thead>
+  
+  <div class="row">
+    <div class="col-3">
+      <div class="container profile-add-section"><p><a class="btn btn-primary" href="{{ url_for('template_add') }}">NEW TEMPLATE</a></p></div>
+  </div>
+  
+    <div class="col-9">
+      {% if templates %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Template Name</th>
+            <th>Customer</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        
+        <tbody>
+        {% for template in templates %}
         <tr>
-          <th>Template Name</th>
-          <th>Customer</th>
-          <th>Action</th>
+          <td>{{ template.template_name }}</td>
+          <td>{{ template.customer }}</td>
+          <td><a class="btn btn-success btn-sm" href="">Modify</a>&nbsp;|&nbsp;<a class="btn btn-danger btn-sm" href="{{ url_for('template_delete', id=template.id ) }}">Delete</a></td>
         </tr>
-      </thead>
-      
-      <tbody>
-      {% for template in templates %}
-      <tr>
-        <td>{{ template.template_name }}</td>
-        <td>{{ template.customer }}</td>
-        <td><a class="button button-primary action" href="">Modify</a>&nbsp;|&nbsp;<a class="button button-primary action" href="">Delete</a></td>
-      </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
   </div>
-</div>
-{% endif %}
+</div> <!-- end .form -->
 {% endblock %}

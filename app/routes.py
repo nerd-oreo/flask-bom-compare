@@ -298,6 +298,14 @@ def template_select_sheet():
         return redirect(url_for('template_manage'))
 
 
+@app.route('/template/delete/<id>')
+def template_delete(id):
+    template = MappingTemplate.query.filter_by(id=id).first()
+    db.session.delete(template)
+    db.session.commit()
+    return redirect(url_for('template_manage'))
+
+
 @app.route('/profile/manage')
 def profile_manage():
     profiles = mProfile.query.all()

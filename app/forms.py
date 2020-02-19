@@ -75,4 +75,4 @@ class NewProfileForm(FlaskForm):
     delimiter = StringField('Delimiter')
     delimiter_action = SelectField('Delimiter Action', choices=[('not apply', 'not apply'), ('add', 'add'), ('remove', 'remove')], validators=[DataRequired()])
     delimiter_sample = StringField('Delimiter Sample')
-    add_profile = SubmitField('Add Profile')
+    add_profile = SubmitField('CREATE')
